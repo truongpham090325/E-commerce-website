@@ -6,6 +6,8 @@ html(
   lang="en"
   )
   head
+    script.
+      const pathAdmin = "#{pathAdmin}"
     meta(charset="utf-8")
     title #{pageTitle}
     meta(
@@ -45,6 +47,7 @@ html(
       rel="stylesheet" 
       href="/admin/assets/css/app.min.css"
       )
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
   // Top Bar Start
   body
     // Top Bar Start
@@ -66,9 +69,11 @@ html(
     // end page-wrapper
     // Javascript
     // vendor js
+    script(src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js")
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     script(src="/admin/assets/libs/bootstrap/js/bootstrap.bundle.min.js")
     script(src="/admin/assets/libs/simplebar/simplebar.min.js")
-    script(src="/admin/assets/libs/apexcharts/apexcharts.min.js")
-    script(src="/admin/assets/js/pages/ecommerce-index.init.js")
+    block script
     script(src="/admin/assets/js/app.js")
+    script(src="/admin/assets/js/main.js") 
   // end body

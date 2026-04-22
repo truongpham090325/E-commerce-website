@@ -31,30 +31,30 @@
               span Tổng quan
           li.nav-item
             a.nav-link(
-              aria-controls="sidebarArticle" 
+              aria-controls="sidebarBlog" 
               aria-expanded="false" 
               role="button" 
               data-bs-toggle="collapse" 
-              href="#sidebarArticle"
+              href="#sidebarBlog"
               )
               i.iconoir-page-edit.menu-icon
               span Bài viết
-            #sidebarArticle.collapse
+            #sidebarBlog.collapse
               ul.nav.flex-column
                 li.nav-item
                   a.nav-link(
-                    href=`/${pathAdmin}/article/create`
+                    href=`/${pathAdmin}/blog/create`
                     ) Tạo bài viết
                 li.nav-item
                   a.nav-link(
-                    href=`/${pathAdmin}/article/list`
+                    href=`/${pathAdmin}/blog/list`
                     ) Danh sách bài viết
                 li.nav-item
                   a.nav-link(
-                    href=`/${pathAdmin}/article/category`
+                    href=`/${pathAdmin}/blog/category`
                     ) Danh mục bài viết
               // end nav
-            // end startbarArticle
+            // end startbarBlog
   // end startbar-menu
 // end startbar
 .startbar-overlay.d-print-none

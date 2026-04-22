@@ -1,10 +1,19 @@
+import { connectDB } from "./configs/database.config";
+import dotenv from "dotenv";
 import express from "express";
 import path from "path";
 import adminRoutes from "./routes/admin/index.route";
 import clientRoutes from "./routes/client/index.route";
 import { pathAdmin } from "./configs/variable.config";
+
+// Load biến môi trường
+dotenv.config();
+
 const app = express();
 const port = 3000;
+
+// Kết nối cơ sở dữ liệu
+connectDB();
 
 // Thiết lập thư mục views và view engine Pug
 app.set("views", path.join(__dirname, "views")); // Thư mục chứa file Pug

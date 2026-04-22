@@ -1,0 +1,19 @@
+extends ../layouts/default.pug
+
+block main
+  .card-header(bis_skin_checked="1")
+    .row.align-items-center(bis_skin_checked="1")
+      .col(bis_skin_checked="1")
+        h4.card-title #{pageTitle}
+      // end col
+      .col-auto(bis_skin_checked="1")
+          a.btn.btn-primary(
+            href=`/${pathAdmin}/blog/category/create`
+            )
+            i.fa-solid.fa-plus.me-1
+            | Tạo danh mục
+      // end col
+    // end row
+
+  .card-body.pt-0(bis_skin_checked="1")
+    //- Table
