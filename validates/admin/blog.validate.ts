@@ -10,6 +10,9 @@ export const createCategoryPost = (
     name: Joi.string().required().messages({
       "string.empty": "Vui lòng nhập tên danh mục bài viết!",
     }),
+    slug: Joi.string().required().messages({
+      "string.empty": "Vui lòng nhập tên đường dẫn!",
+    }),
     parent: Joi.string().allow(""),
     description: Joi.string().allow(""),
   });

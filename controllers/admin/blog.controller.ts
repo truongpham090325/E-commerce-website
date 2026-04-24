@@ -20,11 +20,29 @@ export const createCategory = async (req: Request, res: Response) => {
 };
 
 export const createCategoryPost = async (req: Request, res: Response) => {
-  const newRecord = new CategoryBlog(req.body);
-  await newRecord.save();
+  try {
+    const existSlug = await CategoryBlog.findOne({
+      slug: req.body.slug,
+    });
+    if (existSlug) {
+      res.json({
+        code: "error",
+        message: "Đường dẫn đã tồn tại!",
+      });
+      return;
+    }
 
-  res.json({
-    code: "success",
-    message: "Tạo danh mục bài viết thành công!",
-  });
+    const newRecord = new CategoryBlog(req.body);
+    await newRecord.save();
+
+    res.json({
+      code: "success",
+      message: "Tạo danh mục bài viết thành công!",
+    });
+  } catch (error) {
+    res.json({
+      code: "success",
+      message: "Tạo danh mục bài viết thất bại!",
+    });
+  }
 };

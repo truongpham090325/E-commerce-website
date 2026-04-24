@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const schema = new mongoose.Schema(
   {
     name: String,
+    slug: String,
     parent: String,
     description: String,
   },
