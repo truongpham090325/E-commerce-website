@@ -14,6 +14,7 @@ export const createCategoryPost = (
       "string.empty": "Vui lòng nhập tên đường dẫn!",
     }),
     parent: Joi.string().allow(""),
+    status: Joi.string().allow(""),
     description: Joi.string().allow(""),
   });
 

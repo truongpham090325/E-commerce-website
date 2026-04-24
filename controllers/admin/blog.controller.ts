@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import CategoryBlog from "../../models/category-blog.model";
 import { buildCategoryTree } from "../../helpers/category.helper";
+import slugify from "slugify";
 
 export const category = (req: Request, res: Response) => {
   res.render("admin/pages/blog-category", {
@@ -32,6 +33,11 @@ export const createCategoryPost = async (req: Request, res: Response) => {
       return;
     }
 
+    req.body.search = slugify(`${req.body.name}`, {
+      replacement: " ",
+      lower: true,
+    });
+
     const newRecord = new CategoryBlog(req.body);
     await newRecord.save();
 
@@ -40,6 +46,7 @@ export const createCategoryPost = async (req: Request, res: Response) => {
       message: "Tạo danh mục bài viết thành công!",
     });
   } catch (error) {
+    console.log(error);
     res.json({
       code: "success",
       message: "Tạo danh mục bài viết thất bại!",
