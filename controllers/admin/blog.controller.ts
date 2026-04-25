@@ -3,9 +3,24 @@ import CategoryBlog from "../../models/category-blog.model";
 import { buildCategoryTree } from "../../helpers/category.helper";
 import slugify from "slugify";
 
-export const category = (req: Request, res: Response) => {
+export const category = async (req: Request, res: Response) => {
+  const categoryList: any = await CategoryBlog.find({
+    deleted: false,
+  });
+
+  for (const item of categoryList) {
+    if (item.parent) {
+      const categoryParent = await CategoryBlog.findOne({
+        _id: item.parent,
+      });
+
+      item.parentName = categoryParent?.name;
+    }
+  }
+
   res.render("admin/pages/blog-category", {
     pageTitle: "Quản lý danh mục bài viết",
+    categoryList: categoryList,
   });
 };
 
