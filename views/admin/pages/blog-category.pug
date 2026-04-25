@@ -21,6 +21,16 @@ block main
     // end row
 
   .card-body.pt-0(bis_skin_checked="1")
+    //- Search
+    .row
+      .col-lg-6
+        form.input-group.mb-3(form-search)
+          input.form-control(
+            placeholder="Từ khóa..."
+            type="text"
+            name="keyword"
+            )
+          button.btn.btn-secondary Tìm kiếm
     //- Table
     .table-responsive(bis_skin_checked="1")
       table.table.table-striped.mb-0

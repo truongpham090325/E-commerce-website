@@ -236,3 +236,28 @@ if (listButtonApi.length > 0) {
   });
 }
 // End button-api
+
+// form-search
+const formSearch = document.querySelector("[form-search]");
+if (formSearch) {
+  const url = new URL(window.location.href);
+
+  formSearch.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const value = event.target.keyword.value;
+    if (value) {
+      url.searchParams.set("keyword", value);
+    } else {
+      url.searchParams.delete("keyword");
+    }
+    window.location.href = url.href;
+  });
+
+  // Hiển thị giá trị mặc định
+  const valueCurrent = url.searchParams.get("keyword");
+  if (valueCurrent) {
+    formSearch.keyword.value = valueCurrent;
+  }
+}
+// End form-search
