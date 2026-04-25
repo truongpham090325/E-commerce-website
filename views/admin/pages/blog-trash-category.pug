@@ -7,16 +7,11 @@ block main
         h4.card-title #{pageTitle}
       // end col
       .col-auto(bis_skin_checked="1")
-          a.btn.btn-danger.me-1(
-            href=`/${pathAdmin}/blog/category/trash`
+          a.btn.btn-info(
+            href=`/${pathAdmin}/blog/category`
             )
-            i.far.fa-trash-alt.me-1
-            | Thùng rác
-          a.btn.btn-primary(
-            href=`/${pathAdmin}/blog/category/create`
-            )
-            i.fa-solid.fa-plus.me-1
-            | Tạo danh mục
+            i.fas.fa-arrow-left.me-1
+            | Quay lại danh sách
       // end col
     // end row
 
@@ -45,13 +40,18 @@ block main
                   span.badge.bg-danger Tạm dừng
               td #{item.view}
               td.text-end
-                a(href=`/${pathAdmin}/blog/category/edit/${item.id}`)
-                  i.las.la-pen.text-secondary.font-16.fs-20
                 a(
                   href="javascript:;"
                   button-api
                   data-method="PATCH"
-                  data-api=`/${pathAdmin}/blog/category/delete/${item.id}`
+                  data-api=`/${pathAdmin}/blog/category/undo/${item.id}`
+                  )
+                  i.fas.fa-undo-alt.text-secondary.font-16.fs-20
+                a(
+                  href="javascript:;"
+                  button-api
+                  data-method="DELETE"
+                  data-api=`/${pathAdmin}/blog/category/destroy/${item.id}`
                   )
                   i.las.la-trash-alt.text-secondary.font-16.fs-20
       // end /table

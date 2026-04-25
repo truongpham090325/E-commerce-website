@@ -188,20 +188,50 @@ if (listButtonApi.length > 0) {
       const method = button.getAttribute("data-method");
       const api = button.getAttribute("data-api");
 
-      fetch(api, {
-        method: method || "GET",
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.code == "error") {
-            notyf.error(data.message);
-          }
+      if (method == "DELETE") {
+        Swal.fire({
+          title: "Bạn có chắc muốn xóa không?",
+          text: "Hành động không thể khôi phục!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "yellow",
+          cancelButtonColor: "red",
+          confirmButtonText: "Đồng ý!",
+          cancelButtonText: "Hủy bỏ",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(api, {
+              method: method,
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.code == "error") {
+                  notyf.error(data.message);
+                }
 
-          if (data.code == "success") {
-            drawNotify(data.code, data.message);
-            window.location.reload();
+                if (data.code == "success") {
+                  drawNotify(data.code, data.message);
+                  window.location.reload();
+                }
+              });
           }
         });
+      } else {
+        fetch(api, {
+          method: method || "GET",
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.code == "error") {
+              notyf.error(data.message);
+            }
+
+            if (data.code == "success") {
+              drawNotify(data.code, data.message);
+              window.location.reload();
+            }
+          });
+      }
     });
   });
 }

@@ -193,3 +193,97 @@ export const deleteCategoryPatch = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const trashCategory = async (req: Request, res: Response) => {
+  const categoryList: any = await CategoryBlog.find({
+    deleted: true,
+  });
+
+  for (const item of categoryList) {
+    if (item.parent) {
+      const categoryParent = await CategoryBlog.findOne({
+        _id: item.parent,
+      });
+
+      item.parentName = categoryParent?.name;
+    }
+  }
+
+  res.render("admin/pages/blog-trash-category", {
+    pageTitle: "Thùng rác danh mục bài viết",
+    categoryList: categoryList,
+  });
+};
+
+export const undoCategoryPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const categoryDetail = await CategoryBlog.findOne({
+      _id: id,
+    });
+
+    if (!categoryDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await CategoryBlog.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: false,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Khôi phục danh mục bài viết thành công!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+export const destroyCategoryDelete = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const categoryDetail = await CategoryBlog.findOne({
+      _id: id,
+    });
+
+    if (!categoryDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await CategoryBlog.deleteOne({
+      _id: id,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa vĩnh viễn danh mục bài viết!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};

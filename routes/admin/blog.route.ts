@@ -29,4 +29,10 @@ router.patch(
 
 router.patch("/category/delete/:id", blogController.deleteCategoryPatch);
 
+router.get("/category/trash", blogController.trashCategory);
+
+router.patch("/category/undo/:id", blogController.undoCategoryPatch);
+
+router.delete("/category/destroy/:id", blogController.destroyCategoryDelete);
+
 export default router;
