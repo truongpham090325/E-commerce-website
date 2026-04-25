@@ -27,4 +27,6 @@ router.patch(
   blogController.editCategoryPatch,
 );
 
+router.patch("/category/delete/:id", blogController.deleteCategoryPatch);
+
 export default router;

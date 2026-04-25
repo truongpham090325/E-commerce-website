@@ -42,6 +42,11 @@ block main
               td.text-end
                 a(href=`/${pathAdmin}/blog/category/edit/${item.id}`)
                   i.las.la-pen.text-secondary.font-16.fs-20
-                a(href="#")
+                a(
+                  href="javascript:;"
+                  button-api
+                  data-method="PATCH"
+                  data-api=`/${pathAdmin}/blog/category/delete/${item.id}`
+                  )
                   i.las.la-trash-alt.text-secondary.font-16.fs-20
       // end /table

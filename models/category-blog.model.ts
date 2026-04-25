@@ -20,6 +20,7 @@ const schema = new mongoose.Schema(
       default: false,
     },
     search: String,
+    deletedAt: Date,
   },
   {
     timestamps: true, // Tự động sinh ra trường createdAt và updatedAt

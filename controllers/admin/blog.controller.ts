@@ -153,3 +153,43 @@ export const editCategoryPatch = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteCategoryPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const categoryDetail = await CategoryBlog.findOne({
+      _id: id,
+    });
+
+    if (!categoryDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await CategoryBlog.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: true,
+        deletedAt: Date.now(),
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Xóa danh mục bài viết thành công!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
