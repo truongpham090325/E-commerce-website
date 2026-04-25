@@ -17,4 +17,14 @@ router.post(
   blogValidate.createCategoryPost,
   blogController.createCategoryPost,
 );
+
+router.get("/category/edit/:id", blogController.editCategory);
+
+router.patch(
+  "/category/edit/:id",
+  upload.none(),
+  blogValidate.createCategoryPost,
+  blogController.editCategoryPatch,
+);
+
 export default router;

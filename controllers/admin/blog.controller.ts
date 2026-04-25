@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import CategoryBlog from "../../models/category-blog.model";
 import { buildCategoryTree } from "../../helpers/category.helper";
 import slugify from "slugify";
+import { pathAdmin } from "../../configs/variable.config";
 
 export const category = async (req: Request, res: Response) => {
   const categoryList: any = await CategoryBlog.find({
@@ -25,7 +26,9 @@ export const category = async (req: Request, res: Response) => {
 };
 
 export const createCategory = async (req: Request, res: Response) => {
-  const categoryList = await CategoryBlog.find({});
+  const categoryList = await CategoryBlog.find({
+    deleted: false,
+  });
 
   const categoryTree = buildCategoryTree(categoryList);
 
@@ -65,6 +68,88 @@ export const createCategoryPost = async (req: Request, res: Response) => {
     res.json({
       code: "success",
       message: "Tạo danh mục bài viết thất bại!",
+    });
+  }
+};
+
+export const editCategory = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const categoryDetail = await CategoryBlog.findOne({
+      _id: id,
+    });
+    if (!categoryDetail) {
+      res.redirect(`/${pathAdmin}/blog/category`);
+      return;
+    }
+
+    const categoryList = await CategoryBlog.find({
+      deleted: false,
+    });
+
+    const categoryTree = buildCategoryTree(categoryList);
+
+    res.render("admin/pages/blog-edit-category", {
+      pageTitle: "Chỉnh sửa danh mục bài viết",
+      categoryList: categoryTree,
+      categoryDetail: categoryDetail,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect(`/${pathAdmin}/blog/category`);
+  }
+};
+
+export const editCategoryPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const categoryDetail = await CategoryBlog.findOne({
+      _id: id,
+    });
+
+    if (!categoryDetail) {
+      res.json({
+        code: "success",
+        message: "Cập nhập danh mục bài viết thất bại!",
+      });
+      return;
+    }
+
+    const existSlug = await CategoryBlog.findOne({
+      _id: { $ne: id },
+      slug: req.body.slug,
+    });
+    if (existSlug) {
+      res.json({
+        code: "error",
+        message: "Đường dẫn đã tồn tại!",
+      });
+      return;
+    }
+
+    req.body.search = slugify(`${req.body.name}`, {
+      replacement: " ",
+      lower: true,
+    });
+
+    await CategoryBlog.updateOne(
+      {
+        _id: id,
+        deleted: false,
+      },
+      req.body,
+    );
+
+    res.json({
+      code: "success",
+      message: "Cập nhập danh mục bài viết thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "success",
+      message: "Cập nhập danh mục bài viết thất bại!",
     });
   }
 };
