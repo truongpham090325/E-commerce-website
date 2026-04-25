@@ -22,7 +22,23 @@ export const category = async (req: Request, res: Response) => {
     find.search = keywordExp;
   }
 
-  const categoryList: any = await CategoryBlog.find(find);
+  let page = 1;
+  const limitItems = 10;
+  if (req.query.page && parseInt(`${req.query.page}`) > 0) {
+    page = parseInt(`${req.query.page}`);
+  }
+  const totalRecord = await CategoryBlog.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord / limitItems);
+  const skip = (page - 1) * limitItems;
+  const pagination = {
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+    skip: skip,
+  };
+
+  const categoryList: any = await CategoryBlog.find(find)
+    .limit(limitItems)
+    .skip(skip);
 
   for (const item of categoryList) {
     if (item.parent) {
@@ -37,6 +53,7 @@ export const category = async (req: Request, res: Response) => {
   res.render("admin/pages/blog-category", {
     pageTitle: "Quản lý danh mục bài viết",
     categoryList: categoryList,
+    pagination: pagination,
   });
 };
 
