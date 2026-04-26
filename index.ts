@@ -10,7 +10,7 @@ import { pathAdmin } from "./configs/variable.config";
 dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = 4000;
 
 // Kết nối cơ sở dữ liệu
 connectDB();
