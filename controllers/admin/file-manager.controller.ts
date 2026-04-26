@@ -2,10 +2,44 @@ import axios from "axios";
 import { Request, Response } from "express";
 import FormData from "form-data";
 import Media from "../../models/media.model";
+import moment from "moment";
+import { formatFileSize } from "../../helpers/format.helper";
 
-export const fileManager = (req: Request, res: Response) => {
+export const fileManager = async (req: Request, res: Response) => {
+  const find = {};
+
+  // Phân trang
+  let page = 1;
+  const limitItems = 10;
+  if (req.query.page && parseInt(`${req.query.page}`) > 0) {
+    page = parseInt(`${req.query.page}`);
+  }
+  const totalRecord = await Media.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord / limitItems);
+  const skip = (page - 1) * limitItems;
+  const pagination = {
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+    skip: skip,
+  };
+  // Hết Phân trang
+
+  const listFile: any = await Media.find(find)
+    .sort({
+      createdAt: "desc",
+    })
+    .limit(limitItems)
+    .skip(skip);
+
+  for (const item of listFile) {
+    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+    item.sizeFormat = formatFileSize(item.size);
+  }
+
   res.render("admin/pages/file-manager", {
     pageTitle: "Quản lý file",
+    listFile: listFile,
+    pagination: pagination,
   });
 };
 
