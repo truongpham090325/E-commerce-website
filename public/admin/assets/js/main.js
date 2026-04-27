@@ -296,3 +296,45 @@ if (listButtonCopy.length > 0) {
   });
 }
 // End button-copy
+
+// modalPreviewFile
+const modalPreviewFile = document.querySelector("#modalPreviewFile");
+if (modalPreviewFile) {
+  const innerPreview = modalPreviewFile.querySelector(".inner-preview");
+
+  // Sự kiện đóng modal
+  modalPreviewFile.addEventListener("hide.bs.modal", (event) => {
+    innerPreview.innerHTML = "";
+  });
+
+  // Sự kiện mở modal
+  modalPreviewFile.addEventListener("show.bs.modal", (event) => {
+    const buttonClicked = event.relatedTarget;
+    const file = buttonClicked.getAttribute("data-file");
+    const mimetype = buttonClicked.getAttribute("data-mimetype");
+
+    // Hiển thị file theo đúng định dạng
+    if (mimetype.includes("image")) {
+      innerPreview.innerHTML = `
+        <img src="${file}" width="100%" />
+      `;
+    } else if (mimetype.includes("audio")) {
+      innerPreview.innerHTML = `
+        <audio controls width="100%">
+          <source src="${file}"></source/>
+        </audio>
+      `;
+    } else if (mimetype.includes("video")) {
+      innerPreview.innerHTML = `
+        <video controls width="100%">
+          <source src="${file}"></source/>
+        </video>
+      `;
+    } else if (mimetype.includes("application")) {
+      innerPreview.innerHTML = `
+        <iframe src=${file} width="100%" height="500px"></iframe>
+      `;
+    }
+  });
+}
+// End modalPreviewFile
