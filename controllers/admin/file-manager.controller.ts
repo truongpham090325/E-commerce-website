@@ -4,8 +4,10 @@ import FormData from "form-data";
 import Media from "../../models/media.model";
 import moment from "moment";
 import { formatFileSize } from "../../helpers/format.helper";
+import { domainCDN } from "../../configs/variable.config";
 
 export const fileManager = async (req: Request, res: Response) => {
+  // Danh sách các file
   const find = {};
 
   // Phân trang
@@ -35,11 +37,27 @@ export const fileManager = async (req: Request, res: Response) => {
     item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
     item.sizeFormat = formatFileSize(item.size);
   }
+  // Hết danh sách các file
+
+  // Danh sách folder
+  let folderList = [];
+  const response = await axios.get(`${domainCDN}/file-manager/folder/list`);
+
+  if (response.data.code == "success") {
+    folderList = response.data.forderList;
+    for (const item of folderList) {
+      item.createdAtFormat = moment(item.createdAt).format(
+        "HH:mm - DD/MM/YYYY",
+      );
+    }
+  }
+  // Hết Danh sách folder
 
   res.render("admin/pages/file-manager", {
     pageTitle: "Quản lý file",
     listFile: listFile,
     pagination: pagination,
+    folderList: folderList,
   });
 };
 
@@ -204,6 +222,50 @@ export const deleteFileDel = async (req: Request, res: Response) => {
     res.json({
       code: "success",
       message: "Đã xóa file!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
+};
+
+export const createFolderPost = async (req: Request, res: Response) => {
+  try {
+    const { folderName } = req.body;
+
+    if (!folderName) {
+      res.json({
+        code: "error",
+        message: "Vui lòng nhập tên folder!",
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("folderName", folderName);
+
+    const response = await axios.post(
+      "http://localhost:5000/file-manager/folder/create",
+      formData,
+      {
+        headers: formData.getHeaders(),
+      },
+    );
+
+    if (response.data.code == "error") {
+      res.json({
+        code: "error",
+        message: response.data.message,
+      });
+      return;
+    }
+
+    res.json({
+      code: "success",
+      message: "Đã tạo folder!",
     });
   } catch (error) {
     console.log(error);
