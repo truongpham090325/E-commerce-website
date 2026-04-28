@@ -12,4 +12,6 @@ router.post("/upload", upload.array("files"), fileManagerController.uploadPost);
 
 router.patch("/change-file-name", fileManagerController.changeFileNamePatch);
 
+router.delete("/delete-file", fileManagerController.deleteFileDel);
+
 export default router;

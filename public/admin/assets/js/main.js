@@ -396,3 +396,50 @@ if (modalChangeFile) {
   });
 }
 // End modalChangeFile
+
+// button-delete-file
+const listButtonDeleteFile = document.querySelectorAll("[button-delete-file]");
+if (listButtonDeleteFile.length > 0) {
+  listButtonDeleteFile.forEach((button) => {
+    button.addEventListener("click", () => {
+      Swal.fire({
+        title: "Bạn có chắc muốn xóa không?",
+        text: "Hành động không thể khôi phục!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "yellow",
+        cancelButtonColor: "red",
+        confirmButtonText: "Đồng ý!",
+        cancelButtonText: "Hủy bỏ",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const fileId = button.getAttribute("data-file-id");
+          const fileName = button.getAttribute("data-file-name");
+
+          const dataFinal = {
+            fileId: fileId,
+            fileName: fileName,
+          };
+
+          fetch(`/${pathAdmin}/file-manager/delete-file`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(dataFinal),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.code == "error") {
+                notyf.error(data.message);
+              } else {
+                drawNotify(data.code, data.message);
+                window.location.reload();
+              }
+            });
+        }
+      });
+    });
+  });
+}
+// End button-delete-file

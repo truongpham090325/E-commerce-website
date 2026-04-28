@@ -151,3 +151,65 @@ export const changeFileNamePatch = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteFileDel = async (req: Request, res: Response) => {
+  try {
+    const { fileId, fileName } = req.body;
+
+    if (!fileId || !fileName) {
+      res.json({
+        code: "error",
+        message: "Thiếu thông tin cần thiết!",
+      });
+      return;
+    }
+
+    const record = await Media.findOne({
+      _id: fileId,
+    });
+
+    if (!record) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("folder", record.folder);
+    formData.append("fileName", record.fileName);
+
+    const response = await axios.patch(
+      "http://localhost:5000/file-manager/delete-file",
+      formData,
+      {
+        headers: formData.getHeaders(),
+      },
+    );
+
+    if (response.data.code == "error") {
+      res.json({
+        code: "error",
+        message: response.data.message,
+      });
+      return;
+    }
+
+    // Xóa bản ghi trong CSDL
+    await Media.deleteOne({
+      _id: fileId,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa file!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
+};

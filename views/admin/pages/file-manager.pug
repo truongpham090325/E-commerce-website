@@ -67,7 +67,12 @@ block main
                     data-file-id=item.id
                     )
                     i.las.la-pen.text-secondary.fs-20.ms-1
-                  a( href="#")
+                  a(
+                    href="javascript:;"
+                    button-delete-file
+                    data-file-id=item.id
+                    data-file-name=item.fileName
+                    )
                     i.las.la-trash-alt.text-secondary.fs-20.ms-1
     // end card-body
 
