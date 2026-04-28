@@ -338,3 +338,61 @@ if (modalPreviewFile) {
   });
 }
 // End modalPreviewFile
+
+// modalChangeFile
+const modalChangeFile = document.querySelector("#modalChangeFile");
+if (modalChangeFile) {
+  // Sự kiện đóng modal
+  modalChangeFile.addEventListener("hide.bs.modal", (event) => {
+    const form = modalChangeFile.querySelector("form");
+    form.reset();
+  });
+
+  // Sự kiện mở modal
+  modalChangeFile.addEventListener("show.bs.modal", (event) => {
+    const buttonClicked = event.relatedTarget;
+    const fileName = buttonClicked.getAttribute("data-file-name");
+    const fileId = buttonClicked.getAttribute("data-file-id");
+
+    const form = modalChangeFile.querySelector("form");
+    form.fileName.value = fileName;
+    form.fileId.value = fileId;
+  });
+
+  // Sự kiện submit form
+  const form = modalChangeFile.querySelector("form");
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const fileId = event.target.fileId.value;
+    const fileName = event.target.fileName.value;
+
+    if (!fileId || !fileName) {
+      notyf.error("Vui lòng nhập tên file!");
+      return;
+    }
+
+    const dataFinal = {
+      fileId: fileId,
+      fileName: fileName,
+    };
+
+    fetch(`/${pathAdmin}/file-manager/change-file-name`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataFinal),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code == "error") {
+          notyf.error(data.message);
+        } else {
+          drawNotify(data.code, data.message);
+          window.location.reload();
+        }
+      });
+  });
+}
+// End modalChangeFile

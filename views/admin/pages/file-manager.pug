@@ -25,7 +25,7 @@ block main
                 td
                   if (item.mimetype.includes("image"))
                     img(
-                      src=`${domainCDN}${item.forder}/${item.fileName}`
+                      src=`${domainCDN}${item.folder}/${item.fileName}`
                       class="rounded thumb-md me-1 d-inline"
                     )
                   else if(item.mimetype.includes("audio"))
@@ -44,7 +44,7 @@ block main
                   a(
                     href="javascript:;"
                     button-copy
-                    data-content=`${item.forder}/${item.fileName}`
+                    data-content=`${item.folder}/${item.fileName}`
                     )
                     i.las.la-copy.text-secondary.fs-20.ms-1
                   a(
@@ -52,13 +52,20 @@ block main
                     data-bs-toggle="modal" 
                     data-bs-target="#modalPreviewFile"
                     button-preview-file
-                    data-file=`${domainCDN}${item.forder}/${item.fileName}`
+                    data-file=`${domainCDN}${item.folder}/${item.fileName}`
                     data-mimetype=item.mimetype
                     )
                     i.las.la-eye.text-secondary.fs-20.ms-1
-                  a(href=`${domainCDN}${item.forder}/${item.fileName}?type=download`)
+                  a(href=`${domainCDN}${item.folder}/${item.fileName}?type=download`)
                     i.las.la-download.text-secondary.fs-20.ms-1
-                  a(href="#")
+                  a(
+                    href="javascript:;"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalChangeFile"
+                    button-change-file
+                    data-file-name=item.fileName
+                    data-file-id=item.id
+                    )
                     i.las.la-pen.text-secondary.fs-20.ms-1
                   a( href="#")
                     i.las.la-trash-alt.text-secondary.fs-20.ms-1
@@ -96,4 +103,29 @@ block main
         .modal-body
           .inner-preview
   //- End Modal preview file
+
+  //- Modal change file
+  #modalChangeFile.modal.fade(
+    aria-hidden="true" 
+    tabindex="-1"
+    )
+    .modal-dialog.modal-lg
+      .modal-content
+        .modal-header
+          h1#exampleModalLabel.modal-title.fs-5 Đổi tên file
+          button.btn-close(
+            aria-label="Close" 
+            data-bs-dismiss="modal" 
+            type="button"
+            )
+        .modal-body
+          form(action="")
+            .mb-3.d-none
+              label(class="form-label") Id
+              input(type="text" class="form-control" name="fileId")
+            .mb-3
+              label(class="form-label") Tên file
+              input(type="text" class="form-control" name="fileName")
+            button.btn.btn-primary(type="submit") Cập nhật
+  //- End Modal change file
 

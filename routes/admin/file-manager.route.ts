@@ -10,4 +10,6 @@ router.get("/", fileManagerController.fileManager);
 
 router.post("/upload", upload.array("files"), fileManagerController.uploadPost);
 
+router.patch("/change-file-name", fileManagerController.changeFileNamePatch);
+
 export default router;

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const schema = new mongoose.Schema(
   {
-    forder: String,
+    folder: String,
     fileName: String,
     mimetype: String,
     size: Number,
