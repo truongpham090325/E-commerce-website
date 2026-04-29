@@ -292,3 +292,53 @@ export const createFolderPost = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteFolderDel = async (req: Request, res: Response) => {
+  try {
+    const folderPath = req.query.folderPath;
+
+    if (!folderPath) {
+      res.json({
+        code: "error",
+        message: "Vui lòng gửi kèm theo tên folder!",
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("folderPath", folderPath);
+
+    const response = await axios.patch(
+      `${domainCDN}/file-manager/folder/delete`,
+      formData,
+      {
+        headers: formData.getHeaders(),
+      },
+    );
+
+    if (response.data.code == "error") {
+      res.json({
+        code: "error",
+        message: response.data.message,
+      });
+      return;
+    }
+
+    // Xóa các file liên quan trong CSDL
+    const regexFolderPath = new RegExp(`${folderPath}`);
+    await Media.deleteMany({
+      folder: regexFolderPath,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa folder!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
+};
