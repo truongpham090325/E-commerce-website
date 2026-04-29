@@ -8,7 +8,14 @@ import { domainCDN } from "../../configs/variable.config";
 
 export const fileManager = async (req: Request, res: Response) => {
   // Danh sách các file
-  const find = {};
+  const find: {
+    folder?: string;
+  } = {};
+
+  find.folder = "/media";
+  if (req.query.folderPath) {
+    find.folder = find.folder + `/${req.query.folderPath}`;
+  }
 
   // Phân trang
   let page = 1;
@@ -41,7 +48,9 @@ export const fileManager = async (req: Request, res: Response) => {
 
   // Danh sách folder
   let folderList = [];
-  const response = await axios.get(`${domainCDN}/file-manager/folder/list`);
+  const response = await axios.get(
+    `${domainCDN}/file-manager/folder/list?folderPath=${req.query.folderPath}`,
+  );
 
   if (response.data.code == "success") {
     folderList = response.data.forderList;
@@ -74,7 +83,7 @@ export const uploadPost = async (req: Request, res: Response) => {
     });
 
     const response = await axios.post(
-      "http://localhost:5000/file-manager/upload",
+      `${domainCDN}/file-manager/upload`,
       formData,
       {
         headers: formData.getHeaders(),
@@ -132,7 +141,7 @@ export const changeFileNamePatch = async (req: Request, res: Response) => {
     formData.append("newFileName", fileName);
 
     const response = await axios.patch(
-      "http://localhost:5000/file-manager/change-file-name",
+      `${domainCDN}/file-manager/change-file-name`,
       formData,
       {
         headers: formData.getHeaders(),
@@ -199,7 +208,7 @@ export const deleteFileDel = async (req: Request, res: Response) => {
     formData.append("fileName", record.fileName);
 
     const response = await axios.patch(
-      "http://localhost:5000/file-manager/delete-file",
+      `${domainCDN}/file-manager/delete-file`,
       formData,
       {
         headers: formData.getHeaders(),
@@ -234,7 +243,7 @@ export const deleteFileDel = async (req: Request, res: Response) => {
 
 export const createFolderPost = async (req: Request, res: Response) => {
   try {
-    const { folderName } = req.body;
+    const { folderName, folderPath } = req.body;
 
     if (!folderName) {
       res.json({
@@ -247,8 +256,12 @@ export const createFolderPost = async (req: Request, res: Response) => {
     const formData = new FormData();
     formData.append("folderName", folderName);
 
+    if (folderPath) {
+      formData.append("folderPath", folderPath);
+    }
+
     const response = await axios.post(
-      "http://localhost:5000/file-manager/folder/create",
+      `${domainCDN}/file-manager/folder/create`,
       formData,
       {
         headers: formData.getHeaders(),

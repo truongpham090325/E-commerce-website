@@ -460,6 +460,12 @@ if (formCreateFolder) {
       folderName: folderName,
     };
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const folderPath = urlParams.get("folderPath");
+    if (folderPath) {
+      dataFinal.folderPath = folderPath;
+    }
+
     fetch(`/${pathAdmin}/file-manager/folder/create`, {
       method: "POST",
       headers: {
@@ -479,3 +485,62 @@ if (formCreateFolder) {
   });
 }
 // End form-create-folder
+
+// button-to-folder
+const listButtonToFolder = document.querySelectorAll("[button-to-folder]");
+if (listButtonToFolder.length > 0) {
+  const url = new URL(window.location.href);
+
+  listButtonToFolder.forEach((button) => {
+    button.addEventListener("click", () => {
+      let folderPath = button.getAttribute("data-folder-path");
+
+      if (folderPath) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const folderPathCurrent = urlParams.get("folderPath");
+        if (folderPathCurrent) {
+          folderPath = `${folderPathCurrent}/${folderPath}`;
+        }
+        url.searchParams.set("folderPath", folderPath);
+      } else {
+        url.searchParams.delete("folderPath");
+      }
+      window.location.href = url.href;
+    });
+  });
+}
+// End button-to-folder
+
+// breadcumb-folder
+const breadcumbFolder = document.querySelector("[breadcumb-folder]");
+if (breadcumbFolder) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const folderPath = urlParams.get("folderPath") || "";
+  const listFolder = folderPath.split("/") || [];
+
+  let htmls = `
+    <li class="list-group-item bg-white">
+      <a href="/${pathAdmin}/file-manager">
+        <i class="la la-angle-double-right text-info me-2"></i>
+        Media
+      </a>
+    </li>
+  `;
+
+  let path = "";
+  listFolder.forEach((item, index) => {
+    path += (index > 0 ? "/" : "") + item;
+    console.log(path);
+
+    htmls += `
+    <li class="list-group-item bg-white">
+      <a href="/${pathAdmin}/file-manager">
+        <i class="la la-angle-double-right text-info me-2"></i>
+        ${item}
+      </a>
+    </li>
+    `;
+  });
+  breadcumbFolder.innerHTML = htmls;
+}
+// End breadcumb-folder
