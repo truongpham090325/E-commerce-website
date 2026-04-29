@@ -19,4 +19,5 @@ router.post("/folder/create", fileManagerController.createFolderPost);
 
 router.delete("/folder/delete", fileManagerController.deleteFolderDel);
 
+router.get("/iframe", fileManagerController.iframe);
 export default router;
