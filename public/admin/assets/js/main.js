@@ -529,12 +529,12 @@ if (breadcumbFolder) {
 
   let path = "";
   listFolder.forEach((item, index) => {
-    path += (index > 0 ? "/" : "") + item;
+    path += (index > 0 ? "/" : "") + listFolder[index];
     console.log(path);
 
     htmls += `
     <li class="list-group-item bg-white">
-      <a href="/${pathAdmin}/file-manager">
+      <a href="/${pathAdmin}/file-manager?folderPath=${path}">
         <i class="la la-angle-double-right text-info me-2"></i>
         ${item}
       </a>
