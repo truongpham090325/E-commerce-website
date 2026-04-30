@@ -143,7 +143,7 @@ export const editCategoryPatch = async (req: Request, res: Response) => {
 
     if (!categoryDetail) {
       res.json({
-        code: "success",
+        code: "error",
         message: "Cập nhập danh mục bài viết thất bại!",
       });
       return;
@@ -370,6 +370,135 @@ export const createPost = async (req: Request, res: Response) => {
     res.json({
       code: "success",
       message: "Tạo bài viết thất bại!",
+    });
+  }
+};
+
+export const list = async (req: Request, res: Response) => {
+  const find: {
+    deleted: boolean;
+    search?: RegExp;
+  } = {
+    deleted: false,
+  };
+
+  if (req.query.keyword) {
+    const keyword = slugify(`${req.query.keyword}`, {
+      replacement: " ",
+      lower: true,
+    });
+
+    const keywordExp = new RegExp(keyword, "i");
+    find.search = keywordExp;
+  }
+
+  let page = 1;
+  const limitItems = 10;
+  if (req.query.page && parseInt(`${req.query.page}`) > 0) {
+    page = parseInt(`${req.query.page}`);
+  }
+  const totalRecord = await Blog.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord / limitItems);
+  const skip = (page - 1) * limitItems;
+  const pagination = {
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+    skip: skip,
+  };
+
+  const blogList: any = await Blog.find(find).limit(limitItems).skip(skip);
+
+  res.render("admin/pages/blog-list", {
+    pageTitle: "Danh sách danh mục bài viết",
+    blogList: blogList,
+    pagination: pagination,
+  });
+};
+
+export const edit = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const blogDetail = await Blog.findOne({
+      _id: id,
+    });
+    if (!blogDetail) {
+      res.redirect(`/${pathAdmin}/blog/list`);
+      return;
+    }
+
+    const categoryList = await CategoryBlog.find({
+      deleted: false,
+    });
+
+    const categoryTree = buildCategoryTree(categoryList);
+
+    res.render("admin/pages/blog-edit", {
+      pageTitle: "Chỉnh sửa bài viết",
+      blogDetail: blogDetail,
+      categoryList: categoryTree,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect(`/${pathAdmin}/blog/list`);
+  }
+};
+
+export const editPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const blogDetail = await Blog.findOne({
+      _id: id,
+    });
+
+    if (!blogDetail) {
+      res.json({
+        code: "error",
+        message: "Cập nhập danh mục bài viết thất bại!",
+      });
+      return;
+    }
+
+    const existSlug = await Blog.findOne({
+      _id: { $ne: id },
+      slug: req.body.slug,
+    });
+    if (existSlug) {
+      res.json({
+        code: "error",
+        message: "Đường dẫn đã tồn tại!",
+      });
+      return;
+    }
+
+    req.body.category = JSON.parse(req.body.category);
+
+    if (req.body.status == "published") {
+      req.body.publishAt = new Date();
+    }
+
+    req.body.search = slugify(`${req.body.name}`, {
+      replacement: " ",
+      lower: true,
+    });
+
+    await Blog.updateOne(
+      {
+        _id: id,
+        deleted: false,
+      },
+      req.body,
+    );
+
+    res.json({
+      code: "success",
+      message: "Cập nhập bài viết thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "success",
+      message: "Cập nhập danh mục bài viết thất bại!",
     });
   }
 };

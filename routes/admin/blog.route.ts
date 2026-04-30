@@ -44,4 +44,15 @@ router.post(
   blogController.createPost,
 );
 
+router.get("/list", blogController.list);
+
+router.get("/edit/:id", blogController.edit);
+
+router.patch(
+  "/edit/:id",
+  upload.none(),
+  blogValidate.createPost,
+  blogController.editPatch,
+);
+
 export default router;
