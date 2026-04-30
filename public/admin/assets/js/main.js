@@ -119,6 +119,7 @@ if (blogEditCategoryForm) {
       const slug = event.target.slug.value;
       const parent = event.target.parent.value;
       const status = event.target.status.value;
+      const avatar = event.target.avatar.value;
       const description = tinymce.get("description").getContent();
 
       // Tạo formData
@@ -127,6 +128,7 @@ if (blogEditCategoryForm) {
       formData.append("slug", slug);
       formData.append("parent", parent);
       formData.append("status", status);
+      formData.append("avatar", avatar);
       formData.append("description", description);
 
       fetch(`/${pathAdmin}/blog/category/edit/${id}`, {
@@ -621,3 +623,77 @@ if (formGroupFile) {
   }
 }
 // End form-group-file
+
+// checkbox-list
+const getCheckBoxList = (name) => {
+  const checkboxList = document.querySelector(`[checkbox-list="${name}"]`);
+  const inputList = checkboxList.querySelectorAll(
+    `input[type="checkbox"]:checked`,
+  );
+  const idList = [];
+  inputList.forEach((input) => {
+    const id = input.value;
+    if (id) {
+      idList.push(id);
+    }
+  });
+  return idList;
+};
+// End checkbox-list
+
+// blogCreateForm
+const blogCreateForm = document.querySelector("#blogCreateForm");
+if (blogCreateForm) {
+  const validation = new JustValidate("#blogCreateForm");
+
+  validation
+    .addField("#name", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập tên bài viết!",
+      },
+    ])
+    .addField("#slug", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập tên đường dẫn!",
+      },
+    ])
+    .onSuccess((event) => {
+      const name = event.target.name.value;
+      const slug = event.target.slug.value;
+      const category = getCheckBoxList("category");
+      const status = event.target.status.value;
+      const avatar = event.target.avatar.value;
+      const description = tinymce.get("description").getContent();
+      const content = tinymce.get("content").getContent();
+
+      // Tạo formData
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("slug", slug);
+      formData.append("category", JSON.stringify(category));
+      formData.append("status", status);
+      formData.append("avatar", avatar);
+      formData.append("description", description);
+      formData.append("content", content);
+      console.log(formData);
+
+      fetch(`/${pathAdmin}/blog/create`, {
+        method: "POST",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if (data.code == "success") {
+            drawNotify(data.code, data.message);
+            window.location.reload();
+          }
+        });
+    });
+}
+// End blogCreateForm
