@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/options.pug
+include ../mixins/form-group-file.pug
 
 block main
   .card
@@ -36,9 +37,13 @@ block main
               select.form-select(id="status" name="status")
                 option(value="active") Hoạt động
                 option(value="inactive") Tạm dừng
+          .col-md-6.col-lg-6
+            .mb-3
+              +form-group-file("Chọn file", "avatar", "avatar")
           .col-md-12.col-lg-12
             .mb-3
               label.form-label(for="description") Mô tả
               textarea.form-control(id="description" name="description" textarea-mce)
         button.btn.btn-primary(type="submit") Tạo mới
         a.btn.btn-danger.ms-1(href=`/${pathAdmin}/blog/category`) Hủy
+  

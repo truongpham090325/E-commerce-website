@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/options.pug
+include ../mixins/form-group-file.pug
 
 block main
   .card
@@ -46,6 +47,9 @@ block main
                   value="inactive"
                   selected=(categoryDetail.status == "inactive" ? true : false)
                   ) Tạm dừng
+          .col-md-6.col-lg-6
+            .mb-3
+              +form-group-file("Chọn file", "avatar", "avatar", categoryDetail.avatar)
           .col-md-12.col-lg-12
             .mb-3
               label.form-label(for="description") Mô tả

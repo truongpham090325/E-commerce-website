@@ -1,4 +1,3 @@
-import { list } from "./../../../IT-jobs-backend/controllers/city.controller";
 import { Router } from "express";
 import * as fileManagerController from "../../controllers/admin/file-manager.controller";
 import multer from "multer";

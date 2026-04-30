@@ -64,6 +64,7 @@ if (blogCreateCategoryForm) {
       const slug = event.target.slug.value;
       const parent = event.target.parent.value;
       const status = event.target.status.value;
+      const avatar = event.target.avatar.value;
       const description = tinymce.get("description").getContent();
 
       // Tạo formData
@@ -72,6 +73,7 @@ if (blogCreateCategoryForm) {
       formData.append("slug", slug);
       formData.append("parent", parent);
       formData.append("status", status);
+      formData.append("avatar", avatar);
       formData.append("description", description);
 
       fetch(`/${pathAdmin}/blog/category/create`, {
@@ -598,3 +600,24 @@ if (listButtonDeleteFolder.length > 0) {
   });
 }
 // End button-delete-folder
+
+// form-group-file
+const formGroupFile = document.querySelector("[form-group-file]");
+if (formGroupFile) {
+  const inputFile = formGroupFile.querySelector("[input-file]");
+  inputFile.addEventListener("input", () => {
+    const value = inputFile.value;
+    const previewFile = formGroupFile.querySelector("[preview-file]");
+    const img = previewFile.querySelector("img");
+    img.src = `${domainCDN}${value}`;
+  });
+
+  // Hiện thị mặc định
+  if (inputFile.value) {
+    const value = inputFile.value;
+    const previewFile = formGroupFile.querySelector("[preview-file]");
+    const img = previewFile.querySelector("img");
+    img.src = `${domainCDN}${value}`;
+  }
+}
+// End form-group-file
