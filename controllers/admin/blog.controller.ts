@@ -502,3 +502,43 @@ export const editPatch = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deletePatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const blogDetail = await Blog.findOne({
+      _id: id,
+      deleted: false,
+    });
+
+    if (!blogDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await Blog.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: true,
+        deletedAt: Date.now(),
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Xóa bài viết thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};

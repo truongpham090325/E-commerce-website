@@ -55,4 +55,6 @@ router.patch(
   blogController.editPatch,
 );
 
+router.patch("/delete/:id", blogController.deletePatch);
+
 export default router;
