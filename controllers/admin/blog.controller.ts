@@ -409,7 +409,7 @@ export const list = async (req: Request, res: Response) => {
   const blogList: any = await Blog.find(find).limit(limitItems).skip(skip);
 
   res.render("admin/pages/blog-list", {
-    pageTitle: "Danh sách danh mục bài viết",
+    pageTitle: "Danh sách bài viết",
     blogList: blogList,
     pagination: pagination,
   });
@@ -534,6 +534,95 @@ export const deletePatch = async (req: Request, res: Response) => {
       code: "success",
       message: "Xóa bài viết thành công!",
     });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+export const trash = async (req: Request, res: Response) => {
+  const find: {
+    deleted: boolean;
+    search?: RegExp;
+  } = {
+    deleted: true,
+  };
+
+  const blogList: any = await Blog.find(find);
+
+  res.render("admin/pages/blog-trash", {
+    pageTitle: "Thùng rác bài viết",
+    blogList: blogList,
+  });
+};
+
+export const undoPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const blogDetail = await Blog.findOne({
+      _id: id,
+      deleted: true,
+    });
+
+    if (!blogDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await Blog.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: false,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Khôi phục bài viết thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+export const destroyDelete = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const categoryDetail = await Blog.findOne({
+      _id: id,
+    });
+
+    if (!categoryDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await Blog.deleteOne({
+      _id: id,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa vĩnh viễn bài viết!",
+    });
+    return;
   } catch (error) {
     console.log(error);
     res.json({
