@@ -55,7 +55,7 @@ block main
                 else if(item.status == "published")
                   span.badge.bg-primary Đã xuất bản
                 else if(item.status == "archived")
-                  span.badge.bg-danger Đã lưu trữ
+                  span.badge.bg-dark Đã lưu trữ
               td #{item.view}
               td.text-end
                 a(href=`/${pathAdmin}/blog/edit/${item.id}`)
