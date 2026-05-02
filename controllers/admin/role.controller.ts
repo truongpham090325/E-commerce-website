@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { permissionList } from "../../configs/variable.config";
+import { pathAdmin, permissionList } from "../../configs/variable.config";
 import Role from "../../models/role.model";
 import slugify from "slugify";
 
@@ -74,4 +74,70 @@ export const list = async (req: Request, res: Response) => {
     roleList: roleList,
     pagination: pagination,
   });
+};
+
+export const edit = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const roleDetail = await Role.findOne({
+      _id: id,
+    });
+    if (!roleDetail) {
+      res.redirect(`/${pathAdmin}/role/list`);
+      return;
+    }
+
+    res.render("admin/pages/role-edit", {
+      pageTitle: "Chỉnh sửa nhóm quyền",
+      roleDetail: roleDetail,
+      permissionList: permissionList,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect(`/${pathAdmin}/role/list`);
+  }
+};
+
+export const editPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const blogDetail = await Role.findOne({
+      _id: id,
+    });
+
+    if (!blogDetail) {
+      res.json({
+        code: "error",
+        message: "Cập nhập nhóm quyền thất bại!",
+      });
+      return;
+    }
+
+    req.body.permissions = JSON.parse(req.body.permissions);
+
+    req.body.search = slugify(`${req.body.name}`, {
+      replacement: " ",
+      lower: true,
+    });
+
+    await Role.updateOne(
+      {
+        _id: id,
+        deleted: false,
+      },
+      req.body,
+    );
+
+    res.json({
+      code: "success",
+      message: "Cập nhập nhóm quyền thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Cập nhập danh mục bài viết thất bại!",
+    });
+  }
 };

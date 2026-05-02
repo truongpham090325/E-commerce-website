@@ -497,7 +497,7 @@ export const editPatch = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.json({
-      code: "success",
+      code: "error",
       message: "Cập nhập danh mục bài viết thất bại!",
     });
   }

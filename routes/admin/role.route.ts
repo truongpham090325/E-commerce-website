@@ -18,4 +18,13 @@ router.post(
 
 router.get("/list", roleController.list);
 
+router.get("/edit/:id", roleController.edit);
+
+router.patch(
+  "/edit/:id",
+  upload.none(),
+  roleValidate.createPost,
+  roleController.editPatch,
+);
+
 export default router;
