@@ -181,3 +181,92 @@ export const deletePatch = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const trash = async (req: Request, res: Response) => {
+  const find: {
+    deleted: boolean;
+    search?: RegExp;
+  } = {
+    deleted: true,
+  };
+
+  const roleList: any = await Role.find(find);
+
+  res.render("admin/pages/role-trash", {
+    pageTitle: "Thùng rác nhóm quyền",
+    roleList: roleList,
+  });
+};
+
+export const undoPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const roleDetail = await Role.findOne({
+      _id: id,
+      deleted: true,
+    });
+
+    if (!roleDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await Role.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: false,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Khôi phục nhóm quyền thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+export const destroyDelete = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const roleDetail = await Role.findOne({
+      _id: id,
+    });
+
+    if (!roleDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await Role.deleteOne({
+      _id: id,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa vĩnh viễn nhóm quyền!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};

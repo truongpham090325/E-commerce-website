@@ -29,4 +29,10 @@ router.patch(
 
 router.patch("/delete/:id", roleController.deletePatch);
 
+router.get("/trash", roleController.trash);
+
+router.patch("/undo/:id", roleController.undoPatch);
+
+router.delete("/destroy/:id", roleController.destroyDelete);
+
 export default router;
