@@ -27,4 +27,6 @@ router.patch(
   roleController.editPatch,
 );
 
+router.patch("/delete/:id", roleController.deletePatch);
+
 export default router;
