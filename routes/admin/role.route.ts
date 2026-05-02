@@ -16,4 +16,6 @@ router.post(
   roleController.createPost,
 );
 
+router.get("/list", roleController.list);
+
 export default router;
