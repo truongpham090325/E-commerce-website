@@ -18,4 +18,13 @@ router.post(
 
 router.get("/list", accountAdminController.list);
 
+router.get("/edit/:id", accountAdminController.edit);
+
+router.patch(
+  "/edit/:id",
+  upload.none(),
+  accountAdminValidate.editPatch,
+  accountAdminController.editPatch,
+);
+
 export default router;
