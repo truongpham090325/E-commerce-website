@@ -12,24 +12,16 @@ block main
               h4.card-title #{pageTitle}
             // end col
             .col-auto
-              a.btn.btn-danger.me-1(
-                href=`/${pathAdmin}/account-admin/trash`
+              a.btn.btn-info(
+                href=`/${pathAdmin}/account-admin/list`
                 )
-                i.far.fa-trash-alt.me-1
-                | Thùng rác
-              a.btn.btn-primary(
-                href=`/${pathAdmin}/account-admin/create`
-                )
-                i.fa-solid.fa-plus.me-1
-                | Tạo tài khoản
-                // end col
+                i.fas.fa-arrow-left.me-1
+                | Quay lại danh sách
             // end col
           // end row
         // end card-header
         .card-body.pt-0
-          .row
-            .col-lg-6
-              +form-search()
+          //- Table
           .table-responsive
             table.table.table-striped.mb-0
               thead.table-light
@@ -44,7 +36,7 @@ block main
               tbody
                 each item, index in accountAdminList
                   tr
-                    td #{pagination.skip+index+1}
+                    td #{index+1}
                     td
                       img(
                         src=`${domainCDN}${item.avatar}`
@@ -63,15 +55,18 @@ block main
                       else if (item.status == "inactive")
                         span(class="badge bg-danger") Tạm dừng
                     td.text-end
-                      a(href=`/${pathAdmin}/account-admin/edit/${item.id}`)
-                        i.las.la-pen.text-secondary.font-16.fs-20
                       a(
                         href="javascript:;"
                         button-api
                         data-method="PATCH"
-                        data-api=`/${pathAdmin}/account-admin/delete/${item.id}`
-                      )
+                        data-api=`/${pathAdmin}/account-admin/undo/${item.id}`
+                        )
+                        i.fas.fa-undo-alt.text-secondary.font-16.fs-20
+                      a(
+                        href="javascript:;"
+                        button-api
+                        data-method="DELETE"
+                        data-api=`/${pathAdmin}/account-admin/destroy/${item.id}`
+                        )
                         i.las.la-trash-alt.text-secondary.font-16.fs-20
-          //- Pagination
-          +pagination()
     // end col

@@ -27,4 +27,12 @@ router.patch(
   accountAdminController.editPatch,
 );
 
+router.patch("/delete/:id", accountAdminController.deletePatch);
+
+router.get("/trash", accountAdminController.trash);
+
+router.patch("/undo/:id", accountAdminController.undoPatch);
+
+router.delete("/destroy/:id", accountAdminController.destroyDelete);
+
 export default router;

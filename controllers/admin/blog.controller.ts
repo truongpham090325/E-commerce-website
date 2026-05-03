@@ -602,11 +602,11 @@ export const destroyDelete = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
 
-    const categoryDetail = await Blog.findOne({
+    const blogDetail = await Blog.findOne({
       _id: id,
     });
 
-    if (!categoryDetail) {
+    if (!blogDetail) {
       res.json({
         code: "error",
         message: "Bản ghi không tồn tại!",
