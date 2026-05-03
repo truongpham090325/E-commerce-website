@@ -55,3 +55,59 @@ export const createPost = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const list = async (req: Request, res: Response) => {
+  const find: {
+    deleted: boolean;
+    search?: RegExp;
+  } = {
+    deleted: false,
+  };
+
+  if (req.query.keyword) {
+    const keyword = slugify(`${req.query.keyword}`, {
+      replacement: " ",
+      lower: true,
+    });
+
+    const keywordExp = new RegExp(keyword, "i");
+    find.search = keywordExp;
+  }
+
+  // Phân trang
+  let page = 1;
+  const limitItems = 10;
+  if (req.query.page && parseInt(`${req.query.page}`) > 0) {
+    page = parseInt(`${req.query.page}`);
+  }
+  const totalRecord = await AccountAdmin.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord / limitItems);
+  const skip = (page - 1) * limitItems;
+  const pagination = {
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+    skip: skip,
+  };
+  // Hết phân trang
+
+  const accountAdminList: any = await AccountAdmin.find(find)
+    .limit(limitItems)
+    .skip(skip)
+    .sort({
+      createdAt: "desc",
+    });
+
+  for (const item of accountAdminList) {
+    const roleList = await Role.find({
+      _id: { $in: item.roles },
+    });
+
+    item.rolesName = roleList.map((item) => item.name);
+  }
+
+  res.render("admin/pages/account-admin-list", {
+    pageTitle: "Danh sách tài khoản quản trị",
+    accountAdminList: accountAdminList,
+    pagination: pagination,
+  });
+};
