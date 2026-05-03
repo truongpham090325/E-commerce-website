@@ -1017,3 +1017,64 @@ if (accountAdminEditForm) {
     });
 }
 // End accountAdminEditForm
+
+// accountAdminChangePasswordForm
+const accountAdminChangePasswordForm = document.querySelector(
+  "#accountAdminChangePasswordForm",
+);
+if (accountAdminChangePasswordForm) {
+  const validation = new JustValidate("#accountAdminChangePasswordForm");
+
+  validation
+    .addField("#password", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập mật khẩu!",
+      },
+      {
+        validator: (value) => value.length >= 8,
+        errorMessage: "Mật khẩu phải chứa ít nhất 8 ký tự!",
+      },
+      {
+        validator: (value) => /[A-Z]/.test(value),
+        errorMessage: "Mật khẩu phải chứa ít nhất một chữ cái in hoa!",
+      },
+      {
+        validator: (value) => /[a-z]/.test(value),
+        errorMessage: "Mật khẩu phải chứa ít nhất một chữ cái thường!",
+      },
+      {
+        validator: (value) => /\d/.test(value),
+        errorMessage: "Mật khẩu phải chứa ít nhất một chữ số!",
+      },
+      {
+        validator: (value) => /[@$!%*?&]/.test(value),
+        errorMessage: "Mật khẩu phải chứa ít nhất một ký tự đặc biệt!",
+      },
+    ])
+    .onSuccess((event) => {
+      const id = event.target.id.value;
+      const password = event.target.password.value;
+
+      // Tạo FormData
+      const formData = new FormData();
+      formData.append("password", password);
+
+      fetch(`/${pathAdmin}/account-admin/change-password/${id}`, {
+        method: "PATCH",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if (data.code == "success") {
+            drawNotify(data.code, data.message);
+            window.location.reload();
+          }
+        });
+    });
+}
+// End accountAdminChangePasswordForm

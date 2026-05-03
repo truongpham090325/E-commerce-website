@@ -336,3 +336,66 @@ export const destroyDelete = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const changePassword = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const accountDetail = await AccountAdmin.findOne({
+      _id: id,
+    });
+
+    if (!accountDetail) {
+      res.redirect(`/${pathAdmin}/account-admin/list`);
+      return;
+    }
+
+    res.render("admin/pages/account-admin-change-password", {
+      pageTitle: "Đổi mật khâu tài khoản quản trị",
+      accountDetail: accountDetail,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect(`/${pathAdmin}/account-admin/list`);
+  }
+};
+
+export const changePasswordPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const accountDetail = await AccountAdmin.findOne({
+      _id: id,
+    });
+
+    if (!accountDetail) {
+      res.json({
+        code: "error",
+        message: "Tài khoản không tồn tại!",
+      });
+      return;
+    }
+
+    // Mã hóa mật khẩu
+    req.body.password = await bcrypt.hash(req.body.password, 10);
+
+    await AccountAdmin.updateOne(
+      {
+        _id: id,
+        deleted: false,
+      },
+      req.body,
+    );
+
+    res.json({
+      code: "success",
+      message: "Đổi mật khâu tài khoản quản trị thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
+};
