@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as blogController from "../../controllers/admin/blog.controller";
 import * as blogValidate from "../../validations/admin/blog.validate";
+import * as authMiddleware from "../../middlewares/admin/auth.middleware";
 import multer from "multer";
 
 const router = Router();
@@ -40,6 +41,7 @@ router.get("/create", blogController.create);
 router.post(
   "/create",
   upload.none(),
+  authMiddleware.checkPermissions("blog-create"),
   blogValidate.createPost,
   blogController.createPost,
 );
