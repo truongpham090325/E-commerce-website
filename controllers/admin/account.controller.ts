@@ -14,52 +14,78 @@ export const loginPost = async (req: Request, res: Response) => {
   try {
     const { email, password, rememberPassword } = req.body;
 
-    const existAccount: any = await AccountAdmin.findOne({
-      email: email,
-      deleted: false,
-    });
+    let token = "";
 
-    if (!existAccount) {
-      res.json({
-        code: "error",
-        message: "Email không tồn tại trong hệ thống!",
+    if (email === process.env.SUPER_ADMIN_EMAIL) {
+      const isMatch = password === process.env.SUPER_ADMIN_PASSWORD;
+
+      if (!isMatch) {
+        res.json({
+          code: "error",
+          message: "Mật khẩu không chính xác!",
+        });
+        return;
+      }
+
+      // Tạo JWT token
+      token = jwt.sign(
+        {
+          id: process.env.SUPER_ADMIN_ID,
+          email: process.env.SUPER_ADMIN_EMAIL,
+        },
+        `${process.env.JWT_SECRET}`,
+        {
+          expiresIn: rememberPassword == "true" ? "7d" : "1d", // 7 ngày hoặc 1 ngày
+        },
+      );
+    } else {
+      const existAccount: any = await AccountAdmin.findOne({
+        email: email,
+        deleted: false,
       });
-      return;
+
+      if (!existAccount) {
+        res.json({
+          code: "error",
+          message: "Email không tồn tại trong hệ thống!",
+        });
+        return;
+      }
+
+      // Giải mã mật khẩu
+      const isPassword = await bcrypt.compare(
+        password,
+        `${existAccount.password}`,
+      );
+
+      if (!isPassword) {
+        res.json({
+          code: "error",
+          message: "Mật khẩu không chính xác!",
+        });
+        return;
+      }
+
+      if (existAccount.status == "initial") {
+        res.json({
+          code: "error",
+          message: "Tài khoản chưa được kích hoạt!",
+        });
+        return;
+      }
+
+      // Tạo JWT token
+      token = jwt.sign(
+        {
+          id: existAccount.id,
+          email: existAccount.email,
+        },
+        `${process.env.JWT_SECRET}`,
+        {
+          expiresIn: rememberPassword == "true" ? "7d" : "1d", // 7 ngày hoặc 1 ngày
+        },
+      );
     }
-
-    // Giải mã mật khẩu
-    const isPassword = await bcrypt.compare(
-      password,
-      `${existAccount.password}`,
-    );
-
-    if (!isPassword) {
-      res.json({
-        code: "error",
-        message: "Mật khẩu không chính xác!",
-      });
-      return;
-    }
-
-    if (existAccount.status == "initial") {
-      res.json({
-        code: "error",
-        message: "Tài khoản chưa được kích hoạt!",
-      });
-      return;
-    }
-
-    // Tạo JWT token
-    const token = jwt.sign(
-      {
-        id: existAccount.id,
-        email: existAccount.email,
-      },
-      `${process.env.JWT_SECRET}`,
-      {
-        expiresIn: rememberPassword ? "7d" : "1d", // 7 ngày hoặc 1 ngày
-      },
-    );
 
     res.cookie("tokenAdmin", token, {
       httpOnly: true, // Chỉ cho phép server truy cập cookie, JavaScript ở client không thể đọc được
