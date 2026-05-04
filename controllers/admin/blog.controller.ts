@@ -4,6 +4,7 @@ import { buildCategoryTree } from "../../helpers/category.helper";
 import slugify from "slugify";
 import { pathAdmin } from "../../configs/variable.config";
 import Blog from "../../models/blog.model";
+import { logAdminAction } from "../../helpers/log.helper";
 
 export const category = async (req: Request, res: Response) => {
   const find: {
@@ -360,6 +361,11 @@ export const createPost = async (req: Request, res: Response) => {
 
     const newRecord = new Blog(req.body);
     await newRecord.save();
+
+    logAdminAction(
+      req,
+      `Đã tạo bài viết: ${req.body.name} (Id: ${newRecord.id})`,
+    );
 
     res.json({
       code: "success",
