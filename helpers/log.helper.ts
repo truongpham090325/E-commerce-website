@@ -4,7 +4,7 @@ import AdminLog from "../models/admin-log.model";
 export const logAdminAction = async (req: RequestAccount, title: string) => {
   try {
     const dataFinal = {
-      adminID: req.adminId,
+      adminId: req.adminId,
       method: req.method,
       route: req.originalUrl,
       title: title,

@@ -10,6 +10,11 @@ const schema = new mongoose.Schema(
       type: Date,
       expires: 0,
     },
+    deleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: Date,
   },
   {
     timestamps: true, // Tự động sinh ra trường createdAt và updatedAt
