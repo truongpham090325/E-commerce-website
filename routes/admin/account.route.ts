@@ -8,4 +8,6 @@ router.get("/login", accountController.login);
 
 router.post("/login", accountValidate.loginPost, accountController.loginPost);
 
+router.get("/logout", accountController.logout);
+
 export default router;

@@ -5,6 +5,7 @@ import path from "path";
 import adminRoutes from "./routes/admin/index.route";
 import clientRoutes from "./routes/client/index.route";
 import { domainCDN, pathAdmin } from "./configs/variable.config";
+import cookieParser from "cookie-parser";
 
 // Load biến môi trường
 dotenv.config();
@@ -17,6 +18,9 @@ connectDB();
 
 // Cho phép gửi dữ liệu lên dạng json
 app.use(express.json());
+
+// Thư viện cho phép lấy cookie
+app.use(cookieParser());
 
 // Thiết lập thư mục views và view engine Pug
 app.set("views", path.join(__dirname, "views")); // Thư mục chứa file Pug
