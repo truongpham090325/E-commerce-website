@@ -12,6 +12,11 @@ block main
               h4.card-title #{pageTitle}
             // end col
             .col-auto
+              a.btn.btn-danger.me-1(
+                href=`/${pathAdmin}/product/category/trash`
+                )
+                i.fa-solid.fa-trash.me-1
+                | Thùng rác
               a.btn.btn-primary(
                 href=`/${pathAdmin}/product/category/create`
                 )

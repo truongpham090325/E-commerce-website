@@ -184,3 +184,137 @@ export const editCategoryPatch = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteCategoryPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const categoryDetail = await CategoryProduct.findOne({
+      _id: id,
+    });
+
+    if (!categoryDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await CategoryProduct.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: true,
+        deletedAt: Date.now(),
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Xóa danh mục sản phẩm thành công!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+export const trashCategory = async (req: Request, res: Response) => {
+  const categoryList: any = await CategoryProduct.find({
+    deleted: true,
+  });
+
+  for (const item of categoryList) {
+    if (item.parent) {
+      const categoryParent = await CategoryProduct.findOne({
+        _id: item.parent,
+      });
+
+      item.parentName = categoryParent?.name;
+    }
+  }
+
+  res.render("admin/pages/product-trash-category", {
+    pageTitle: "Thùng rác danh mục sản phẩm",
+    categoryList: categoryList,
+  });
+};
+
+export const undoCategoryPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const categoryDetail = await CategoryProduct.findOne({
+      _id: id,
+    });
+
+    if (!categoryDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await CategoryProduct.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: false,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Khôi phục danh mục sản phẩm thành công!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+export const destroyCategoryDelete = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const categoryDetail = await CategoryProduct.findOne({
+      _id: id,
+    });
+
+    if (!categoryDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await CategoryProduct.deleteOne({
+      _id: id,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa vĩnh viễn danh mục sản phẩm!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
