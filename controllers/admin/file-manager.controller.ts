@@ -50,6 +50,11 @@ export const fileManager = async (req: Request, res: Response) => {
   let folderList = [];
   const response = await axios.get(
     `${domainCDN}/file-manager/folder/list?folderPath=${req.query.folderPath}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`,
+      },
+    },
   );
 
   if (response.data.code == "success") {
@@ -90,7 +95,10 @@ export const uploadPost = async (req: Request, res: Response) => {
       `${domainCDN}/file-manager/upload`,
       formData,
       {
-        headers: formData.getHeaders(),
+        headers: {
+          ...formData.getHeaders(),
+          Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`,
+        },
       },
     );
 
@@ -101,14 +109,14 @@ export const uploadPost = async (req: Request, res: Response) => {
         message: "Upload thành công!",
       });
     } else {
-      res.json({
+      res.status(400).json({
         code: "error",
         message: "Upload thất bại!",
       });
     }
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(400).json({
       code: "error",
       message: "Upload thất bại!",
     });
@@ -148,7 +156,10 @@ export const changeFileNamePatch = async (req: Request, res: Response) => {
       `${domainCDN}/file-manager/change-file-name`,
       formData,
       {
-        headers: formData.getHeaders(),
+        headers: {
+          ...formData.getHeaders(),
+          Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`,
+        },
       },
     );
 
@@ -215,7 +226,10 @@ export const deleteFileDel = async (req: Request, res: Response) => {
       `${domainCDN}/file-manager/delete-file`,
       formData,
       {
-        headers: formData.getHeaders(),
+        headers: {
+          ...formData.getHeaders(),
+          Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`,
+        },
       },
     );
 
@@ -268,7 +282,10 @@ export const createFolderPost = async (req: Request, res: Response) => {
       `${domainCDN}/file-manager/folder/create`,
       formData,
       {
-        headers: formData.getHeaders(),
+        headers: {
+          ...formData.getHeaders(),
+          Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`,
+        },
       },
     );
 
@@ -312,7 +329,10 @@ export const deleteFolderDel = async (req: Request, res: Response) => {
       `${domainCDN}/file-manager/folder/delete`,
       formData,
       {
-        headers: formData.getHeaders(),
+        headers: {
+          ...formData.getHeaders(),
+          Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`,
+        },
       },
     );
 

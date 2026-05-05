@@ -30,7 +30,7 @@ if (uppyUpload) {
       );
     }
     if (result.failed.length > 0) {
-      drawNotify("error", `Upload thất bại ${result.successful.length} file!`);
+      drawNotify("error", `Upload thất bại ${result.failed.length} file!`);
     }
     window.location.reload();
   });
