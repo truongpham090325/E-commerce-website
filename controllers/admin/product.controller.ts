@@ -4,8 +4,58 @@ import { buildCategoryTree } from "../../helpers/category.helper";
 import slugify from "slugify";
 
 export const category = async (req: Request, res: Response) => {
+  const find: {
+    deleted: boolean;
+    search?: RegExp;
+  } = {
+    deleted: false,
+  };
+
+  if (req.query.keyword) {
+    const keyword = slugify(`${req.query.keyword}`, {
+      replacement: " ",
+      lower: true,
+    });
+
+    const keywordExp = new RegExp(keyword, "i");
+    find.search = keywordExp;
+  }
+
+  let page = 1;
+  const limitItems = 10;
+  if (req.query.page && parseInt(`${req.query.page}`) > 0) {
+    page = parseInt(`${req.query.page}`);
+  }
+  const totalRecord = await CategoryProduct.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord / limitItems);
+  const skip = (page - 1) * limitItems;
+  const pagination = {
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+    skip: skip,
+  };
+
+  const categoryList: any = await CategoryProduct.find(find)
+    .limit(limitItems)
+    .skip(skip)
+    .sort({
+      createdAt: "desc",
+    });
+
+  for (const item of categoryList) {
+    if (item.parent) {
+      const categoryParent = await CategoryProduct.findOne({
+        _id: item.parent,
+      });
+
+      item.parentName = categoryParent?.name;
+    }
+  }
+
   res.render("admin/pages/product-category", {
     pageTitle: "Quản lý danh mục sản phẩm",
+    categoryList: categoryList,
+    pagination: pagination,
   });
 };
 
