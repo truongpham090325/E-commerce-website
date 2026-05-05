@@ -18,4 +18,13 @@ router.post(
   productController.createCategoryPost,
 );
 
+router.get("/category/edit/:id", productController.editCategory);
+
+router.patch(
+  "/category/edit/:id",
+  upload.none(),
+  productValidate.createCategoryPost,
+  productController.editCategoryPatch,
+);
+
 export default router;

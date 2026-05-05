@@ -8,7 +8,7 @@ export const createCategoryPost = (
 ) => {
   const schema = Joi.object({
     name: Joi.string().required().messages({
-      "string.empty": "Vui lòng nhập tên danh mục bài viết!",
+      "string.empty": "Vui lòng nhập tên danh mục sản phẩm!",
     }),
     slug: Joi.string().required().messages({
       "string.empty": "Vui lòng nhập tên đường dẫn!",
