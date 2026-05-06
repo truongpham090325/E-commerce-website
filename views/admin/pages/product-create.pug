@@ -43,6 +43,25 @@ block main
                 +checkbox-list(categoryList)
           .col-md-12.col-lg-12
             .mb-3
+              label.form-label Danh sách ảnh
+              div(class="form-multi-file")
+                .input-group
+                  span.btn.btn-outline-info(
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalFileManager"
+                  ) Chọn file
+                  span.btn.btn-outline-info(
+                    button-paste
+                  ) Dán file
+                .inner-list-image(multi-file="images")
+                  //- .inner-image
+                  //-   img(src="https://placehold.co/100x100/EEE/31343C", alt="")
+                  //-   span.inner-remove x
+                  //- .inner-image
+                  //-   img(src="https://placehold.co/100x100/EEE/31343C", alt="")
+                  //-   span.inner-remove x
+          .col-md-12.col-lg-12
+            .mb-3
               label.form-label(for="description") Mô tả ngắn
               textarea(id="description" name="description" textarea-mce)
           .col-md-12.col-lg-12

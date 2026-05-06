@@ -653,6 +653,23 @@ const getCheckBoxList = (name) => {
 };
 // End checkbox-list
 
+// getMultiFile
+const getMultiFile = (name) => {
+  const boxMultiFile = document.querySelector(`[multi-file=${name}]`);
+  const listLink = [];
+  const listImage = boxMultiFile.querySelectorAll(
+    ".inner-image img[src-relative]",
+  );
+  listImage.forEach((image) => {
+    const link = image.getAttribute("src-relative");
+    if (link) {
+      listLink.push(link);
+    }
+  });
+  return listLink;
+};
+// End getMultiFile
+
 // blogCreateForm
 const blogCreateForm = document.querySelector("#blogCreateForm");
 if (blogCreateForm) {
@@ -1271,6 +1288,7 @@ if (productCreateForm) {
       const category = getCheckBoxList("category");
       const description = tinymce.get("description").getContent();
       const content = tinymce.get("content").getContent();
+      const images = getMultiFile("images");
 
       // Tạo formData
       const formData = new FormData();
@@ -1281,6 +1299,7 @@ if (productCreateForm) {
       formData.append("category", JSON.stringify(category));
       formData.append("description", description);
       formData.append("content", content);
+      formData.append("images", JSON.stringify(images));
 
       fetch(`/${pathAdmin}/product/create`, {
         method: "POST",
@@ -1300,3 +1319,98 @@ if (productCreateForm) {
     });
 }
 // End productCreateForm
+
+// Checkbox-all
+const checkboxAll = document.querySelector(".checkbox-all");
+if (checkboxAll) {
+  const listCheckboxInput = document.querySelectorAll(".checkbox-input");
+
+  checkboxAll.addEventListener("change", () => {
+    const checked = checkboxAll.checked;
+    listCheckboxInput.forEach((input) => {
+      input.checked = checked;
+    });
+  });
+
+  listCheckboxInput.forEach((input) => {
+    input.addEventListener("change", () => {
+      const listCheckboxInputChecked = document.querySelectorAll(
+        ".checkbox-input:checked",
+      );
+
+      if (listCheckboxInputChecked.length == listCheckboxInput.length) {
+        checkboxAll.checked = true;
+      } else {
+        checkboxAll.checked = false;
+      }
+    });
+  });
+}
+// End Checkbox-all
+
+// button-copy-multi
+const buttonCopyMulti = document.querySelector("[button-copy-multi]");
+if (buttonCopyMulti) {
+  buttonCopyMulti.addEventListener("click", () => {
+    const listCheckboxInputChecked = document.querySelectorAll(
+      ".checkbox-input:checked",
+    );
+    const listLink = [];
+
+    listCheckboxInputChecked.forEach((input) => {
+      listLink.push(input.value);
+    });
+    window.navigator.clipboard.writeText(JSON.stringify(listLink));
+    notyf.success("Đã copy!");
+  });
+}
+// End button-copy-multi
+
+// button-paste
+const listButtonPaste = document.querySelectorAll("[button-paste]");
+if (listButtonPaste.length > 0) {
+  listButtonPaste.forEach((buttonPaste) => {
+    const elementListImage = buttonPaste
+      .closest(".form-multi-file")
+      .querySelector(".inner-list-image");
+
+    buttonPaste.addEventListener("click", async () => {
+      const listLinkJson = await window.navigator.clipboard.readText();
+      const listLink = JSON.parse(listLinkJson);
+
+      let htmls = "";
+
+      listLink.forEach((link) => {
+        htmls += `
+        <div class="inner-image" bis_skin_checked="1">
+          <img src="${domainCDN}${link}" alt="" src-relative="${link}">
+          <span class="inner-remove">x</span>
+        </div>
+      `;
+      });
+
+      elementListImage.innerHTML = htmls;
+
+      new Sortable(elementListImage, {
+        animation: 150,
+      });
+    });
+  });
+}
+// End button-paste
+
+// Button remove image
+const listElementListImage = document.querySelectorAll(".inner-list-image");
+if (listElementListImage.length > 0) {
+  listElementListImage.forEach((elementListImage) => {
+    elementListImage.addEventListener("click", (event) => {
+      if (event.target.closest(".inner-remove")) {
+        const itemParent = event.target.closest(".inner-image");
+        if (itemParent) {
+          itemParent.remove();
+        }
+      }
+    });
+  });
+}
+// End Button remove image
