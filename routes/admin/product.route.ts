@@ -44,4 +44,15 @@ router.post(
   productController.createPost,
 );
 
+router.get("/attribute", productController.attribute);
+
+router.get("/attribute/create", productController.createAttribute);
+
+router.post(
+  "/attribute/create",
+  upload.none(),
+  productValidate.createAttributePost,
+  productController.createAttributePost,
+);
+
 export default router;
