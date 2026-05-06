@@ -463,3 +463,68 @@ export const createAttributePost = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const editAttribute = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const attributeDetail = await AttributeProduct.findOne({
+      _id: id,
+    });
+
+    if (!attributeDetail) {
+      res.redirect(`/${pathAdmin}/product/attribute`);
+      return;
+    }
+
+    res.render("admin/pages/product-edit-attribute", {
+      pageTitle: "Chỉnh sửa thuộc tính sản phẩm",
+      attributeDetail: attributeDetail,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect(`/${pathAdmin}/product/attribute`);
+  }
+};
+
+export const editAttributePatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const attributeDetail = await AttributeProduct.findOne({
+      _id: id,
+    });
+
+    if (!attributeDetail) {
+      res.json({
+        code: "error",
+        message: "Dữ liệu không hợp lệ!",
+      });
+      return;
+    }
+
+    req.body.options = JSON.parse(req.body.options);
+
+    req.body.search = slugify(`${req.body.name}`, {
+      replacement: " ",
+      lower: true,
+    });
+
+    await AttributeProduct.updateOne(
+      {
+        _id: id,
+      },
+      req.body,
+    );
+
+    res.json({
+      code: "success",
+      message: "Cập nhập thuộc tính thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
+};

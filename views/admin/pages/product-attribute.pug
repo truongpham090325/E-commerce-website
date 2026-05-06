@@ -44,13 +44,13 @@ block main
                       each option in item.options
                         span(class="badge bg-success me-1 mb-1") #{option.label}
                     td.text-end
-                      a(href=`/${pathAdmin}/product/attribute/edit/:id`)
+                      a(href=`/${pathAdmin}/product/attribute/edit/${item.id}`)
                         i.las.la-pen.text-secondary.fs-20
                       a(
                         href="javascript:;"
                         button-api
                         data-method="PATCH"
-                        data-api=`/${pathAdmin}/product/attribute/delete/:id`
+                        data-api=`/${pathAdmin}/product/attribute/delete/${item.id}`
                       )
                         i.las.la-trash-alt.text-secondary.fs-20
           +pagination()

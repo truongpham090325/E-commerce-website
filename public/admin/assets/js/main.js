@@ -1518,3 +1518,47 @@ if (productCreateAttributeForm) {
     });
 }
 // End productCreateAttributeForm
+
+// productEditAttributeForm
+const productEditAttributeForm = document.querySelector(
+  "#productEditAttributeForm",
+);
+if (productEditAttributeForm) {
+  const validation = new JustValidate("#productEditAttributeForm");
+
+  validation
+    .addField("#name", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập tên thuộc tính!",
+      },
+    ])
+    .onSuccess((event) => {
+      const id = event.target.id.value;
+      const name = event.target.name.value;
+      const type = event.target.type.value;
+      const options = getOptionlist("options");
+
+      // Tạo formData
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("type", type);
+      formData.append("options", JSON.stringify(options));
+
+      fetch(`/${pathAdmin}/product/attribute/edit/${id}`, {
+        method: "PATCH",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if (data.code == "success") {
+            notyf.success(data.message);
+          }
+        });
+    });
+}
+// End productEditAttributeForm
