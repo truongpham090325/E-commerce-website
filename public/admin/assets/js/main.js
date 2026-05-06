@@ -1244,3 +1244,59 @@ if (productEditCategoryForm) {
     });
 }
 // End productEditCategoryForm
+
+// productCreateForm
+const productCreateForm = document.querySelector("#productCreateForm");
+if (productCreateForm) {
+  const validation = new JustValidate("#productCreateForm");
+
+  validation
+    .addField("#name", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập tên sản phẩm!",
+      },
+    ])
+    .addField("#slug", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập tên đường dẫn!",
+      },
+    ])
+    .onSuccess((event) => {
+      const name = event.target.name.value;
+      const slug = event.target.slug.value;
+      const position = event.target.position.value;
+      const status = event.target.status.value;
+      const category = getCheckBoxList("category");
+      const description = tinymce.get("description").getContent();
+      const content = tinymce.get("content").getContent();
+
+      // Tạo formData
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("slug", slug);
+      formData.append("position", position);
+      formData.append("status", status);
+      formData.append("category", JSON.stringify(category));
+      formData.append("description", description);
+      formData.append("content", content);
+
+      fetch(`/${pathAdmin}/product/create`, {
+        method: "POST",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if (data.code == "success") {
+            drawNotify(data.code, data.message);
+            window.location.reload();
+          }
+        });
+    });
+}
+// End productCreateForm

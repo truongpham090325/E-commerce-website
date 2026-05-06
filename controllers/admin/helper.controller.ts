@@ -4,11 +4,13 @@ import CategoryBlog from "../../models/category-blog.model";
 import Blog from "../../models/blog.model";
 import { generateRandomString } from "../../helpers/generate.helper";
 import CategoryProduct from "../../models/category-product.model";
+import Product from "../../models/product.model";
 
 const models: any = {
   CategoryBlog: CategoryBlog,
   Blog: Blog,
   CategoryProduct: CategoryProduct,
+  Product: Product,
 };
 
 export const generateSlug = async (req: Request, res: Response) => {
