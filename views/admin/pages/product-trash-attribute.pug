@@ -1,6 +1,4 @@
 extends ../layouts/default.pug
-include ../mixins/pagination.pug
-include ../mixins/form-search.pug
 
 block main
   .row
@@ -12,24 +10,17 @@ block main
               h4.card-title #{pageTitle}
             // end col
             .col-auto
-              a.btn.btn-danger.me-1(
-                href=`/${pathAdmin}/product/attribute/trash`
+              a.btn.btn-info(
+                href=`/${pathAdmin}/product/attribute`
                 )
-                i.far.fa-trash-alt.me-1
-                | Thùng rác
-              a.btn.btn-primary(
-                href=`/${pathAdmin}/product/attribute/create`
-                )
-                i.fa-solid.fa-plus.me-1
-                | Tạo thuộc tính
+                i.fas.fa-arrow-left.me-1
+                | Quay lại danh sách
                 // end col
             // end col
           // end row
         // end card-header
         .card-body.pt-0
-          .row
-            .col-lg-6
-              +form-search()
+          //- Table
           .table-responsive
             table.table.table-striped.mb-0
               thead.table-light
@@ -42,21 +33,25 @@ block main
               tbody
                 each item, index in attributeList
                   tr
-                    td #{pagination.skip+index+1}
+                    td #{index+1}
                     td #{item.name}
                     td #{item.type}
                     td
                       each option in item.options
                         span(class="badge bg-success me-1 mb-1") #{option.label}
                     td.text-end
-                      a(href=`/${pathAdmin}/product/attribute/edit/${item.id}`)
-                        i.las.la-pen.text-secondary.fs-20
                       a(
                         href="javascript:;"
                         button-api
                         data-method="PATCH"
-                        data-api=`/${pathAdmin}/product/attribute/delete/${item.id}`
-                      )
-                        i.las.la-trash-alt.text-secondary.fs-20
-          +pagination()
+                        data-api=`/${pathAdmin}/product/attribute/undo/${item.id}`
+                        )
+                        i.fas.fa-undo-alt.text-secondary.font-16.fs-20
+                      a(
+                        href="javascript:;"
+                        button-api
+                        data-method="DELETE"
+                        data-api=`/${pathAdmin}/product/attribute/destroy/${item.id}`
+                        )
+                        i.las.la-trash-alt.text-secondary.font-16.fs-20
     // end col

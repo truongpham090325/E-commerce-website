@@ -528,3 +528,127 @@ export const editAttributePatch = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteAttributePatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const attributeDetail = await AttributeProduct.findOne({
+      _id: id,
+    });
+
+    if (!attributeDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await AttributeProduct.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: true,
+        deletedAt: Date.now(),
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Xóa thuộc tính thành công!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+export const trashAttribute = async (req: Request, res: Response) => {
+  const attributeList: any = await AttributeProduct.find({
+    deleted: true,
+  });
+
+  res.render("admin/pages/product-trash-attribute", {
+    pageTitle: "Thùng rác thuộc tính sản phẩm",
+    attributeList: attributeList,
+  });
+};
+
+export const undoAttributePatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const attributeDetail = await AttributeProduct.findOne({
+      _id: id,
+    });
+
+    if (!attributeDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await AttributeProduct.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: false,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Khôi phục thuộc tính thành công!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+export const destroyAttributeDelete = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const attributeDetail = await AttributeProduct.findOne({
+      _id: id,
+    });
+
+    if (!attributeDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await AttributeProduct.deleteOne({
+      _id: id,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa vĩnh viễn thuộc tính sản phẩm!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
