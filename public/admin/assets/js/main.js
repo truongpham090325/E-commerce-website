@@ -1312,6 +1312,34 @@ if (productCreateForm) {
       const description = tinymce.get("description").getContent();
       const content = tinymce.get("content").getContent();
       const images = getMultiFile("images");
+      const attributes = getCheckBoxList("attributes");
+
+      // variants
+      const variants = [];
+      const listTr = document.querySelectorAll("[variant-table] tbody tr");
+      listTr.forEach((tr) => {
+        const status = tr.querySelector("input.form-check-input").checked;
+        const attributeValue = JSON.parse(
+          tr.querySelector("[attribute-value]").value,
+        );
+        let priceOld = tr.querySelector("[price-old]").value;
+        if (priceOld) {
+          priceOld = parseInt(priceOld);
+        }
+        let priceNew = tr.querySelector("[price-new]").value;
+        if (priceNew) {
+          priceNew = parseInt(priceNew);
+        } else {
+          priceNew = priceOld;
+        }
+        variants.push({
+          status: status,
+          attributeValue: attributeValue,
+          priceOld: priceOld,
+          priceNew: priceNew,
+        });
+      });
+      // End variants
 
       // Tạo formData
       const formData = new FormData();
@@ -1325,6 +1353,8 @@ if (productCreateForm) {
       formData.append("description", description);
       formData.append("content", content);
       formData.append("images", JSON.stringify(images));
+      formData.append("attributes", JSON.stringify(attributes));
+      formData.append("variants", JSON.stringify(variants));
 
       fetch(`/${pathAdmin}/product/create`, {
         method: "POST",
@@ -1599,7 +1629,60 @@ if (buttonRenderVariant) {
       idList.includes(item._id),
     );
     const variantList = generateVariants(attributeListChecked);
-    console.log(variantList);
+
+    // Lấy ra bảng
+    const variantTable = document.querySelector("[variant-table]");
+
+    // Hiển thị tiêu đề cột
+    const variantHead = variantTable.querySelector("thead tr");
+    let variantHeadHTML = `
+      <th scope="col">Trạng thái</th>
+    `;
+    attributeListChecked.forEach((item) => {
+      variantHeadHTML += `
+        <th scope="col">${item.name}</th>
+      `;
+    });
+    variantHeadHTML += `
+      <th scope="col">Giá cũ</th>
+      <th scope="col">Giá mới</th>
+    `;
+    variantHead.innerHTML = variantHeadHTML;
+
+    // Hiển thị các hàng
+    const variantBody = variantTable.querySelector("tbody");
+    const priceOld = document.querySelector(`[name="priceOld"]`).value;
+    const priceNew = document.querySelector(`[name="priceNew"]`).value;
+
+    let variantBodyHTML = "";
+    variantList.forEach((variant) => {
+      const variantJSON = JSON.stringify(variant).replaceAll(`"`, `&quot;`);
+      let tr = `<tr>`;
+      tr += `
+        <td>
+          <div class="form-check form-switch form-switch-success" bis_skin_checked="1">
+            <input class="form-check-input" type="checkbox" checked="">
+          </div>
+          <input class="d-none" attribute-value value="${variantJSON}" />
+        </td>
+      `;
+      variant.forEach((item) => {
+        tr += `
+          <td>${item.label}</td>
+        `;
+      });
+      tr += `
+        <td>
+          <input class="form-control" type="number" value="${priceOld}" price-old>
+        </td>
+        <td>
+          <input class="form-control" type="number" value="${priceNew}" price-new>
+        </td>
+      `;
+      tr += `</tr>`;
+      variantBodyHTML += tr;
+      variantBody.innerHTML = variantBodyHTML;
+    });
   });
 }
 // End button-render-variant
