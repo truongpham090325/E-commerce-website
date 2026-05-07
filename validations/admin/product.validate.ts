@@ -52,6 +52,7 @@ export const createPost = (req: Request, res: Response, next: NextFunction) => {
     images: Joi.string().allow(""),
     attributes: Joi.string().allow(""),
     variants: Joi.string().allow(""),
+    tags: Joi.string().allow(""),
   });
 
   const { error } = schema.validate(req.body);

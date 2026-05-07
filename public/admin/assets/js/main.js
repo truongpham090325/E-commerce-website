@@ -1349,6 +1349,13 @@ if (productCreateForm) {
       });
       // End variants
 
+      // tags
+      const selectTag = document.querySelector(`select[name="tags"]`);
+      const tags = Array.from(selectTag.selectedOptions).map((option) => {
+        return option.value;
+      });
+      // End tags
+
       // Tạo formData
       const formData = new FormData();
       formData.append("name", name);
@@ -1364,6 +1371,7 @@ if (productCreateForm) {
       formData.append("images", JSON.stringify(images));
       formData.append("attributes", JSON.stringify(attributes));
       formData.append("variants", JSON.stringify(variants));
+      formData.append("tags", JSON.stringify(tags));
 
       fetch(`/${pathAdmin}/product/create`, {
         method: "POST",
@@ -1699,3 +1707,22 @@ if (buttonRenderVariant) {
   });
 }
 // End button-render-variant
+
+// select-tag
+const selectTag = document.querySelectorAll("[select-tag]");
+if (selectTag) {
+  new Selectr("[select-tag]", {
+    taggable: true,
+  });
+
+  // Ngăn chặn sự kiện submit form
+  const inputTag = document.querySelector(".selectr-tag-input");
+  if (inputTag) {
+    inputTag.addEventListener("keydown", (event) => {
+      if (event.key == "Enter") {
+        event.preventDefault();
+      }
+    });
+  }
+}
+// End select-tag

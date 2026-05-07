@@ -391,6 +391,8 @@ export const createPost = async (req: Request, res: Response) => {
 
     req.body.variants = JSON.parse(req.body.variants);
 
+    req.body.tags = JSON.parse(req.body.tags);
+
     req.body.search = slugify(`${req.body.name}`, {
       replacement: " ",
       lower: true,
