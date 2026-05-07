@@ -860,3 +860,127 @@ export const editPatch = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deletePatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const productDetail = await Product.findOne({
+      _id: id,
+    });
+
+    if (!productDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await Product.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: true,
+        deletedAt: Date.now(),
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Xóa sản phẩm thành công!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+export const trash = async (req: Request, res: Response) => {
+  const productList: any = await Product.find({
+    deleted: true,
+  });
+
+  res.render("admin/pages/product-trash", {
+    pageTitle: "Thùng rác sản phẩm",
+    productList: productList,
+  });
+};
+
+export const undoPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const productDetail = await Product.findOne({
+      _id: id,
+    });
+
+    if (!productDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await Product.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: false,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Khôi phục sản phẩm thành công!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+export const destroyDelete = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const productDetail = await Product.findOne({
+      _id: id,
+    });
+
+    if (!productDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await Product.deleteOne({
+      _id: id,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa vĩnh viễn sản phẩm!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};

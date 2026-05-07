@@ -86,4 +86,12 @@ router.patch(
   productController.editPatch,
 );
 
+router.patch("/delete/:id", productController.deletePatch);
+
+router.get("/trash", productController.trash);
+
+router.patch("/undo/:id", productController.undoPatch);
+
+router.delete("/destroy/:id", productController.destroyDelete);
+
 export default router;
