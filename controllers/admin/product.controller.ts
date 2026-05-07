@@ -679,3 +679,44 @@ export const destroyAttributeDelete = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const list = async (req: Request, res: Response) => {
+  const find: {
+    deleted: boolean;
+    search?: RegExp;
+  } = {
+    deleted: false,
+  };
+
+  if (req.query.keyword) {
+    const keyword = slugify(`${req.query.keyword}`, {
+      replacement: " ",
+      lower: true,
+    });
+
+    const keywordExp = new RegExp(keyword, "i");
+    find.search = keywordExp;
+  }
+
+  let page = 1;
+  const limitItems = 10;
+  if (req.query.page && parseInt(`${req.query.page}`) > 0) {
+    page = parseInt(`${req.query.page}`);
+  }
+  const totalRecord = await Product.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord / limitItems);
+  const skip = (page - 1) * limitItems;
+  const pagination = {
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+    skip: skip,
+  };
+
+  const productList = await Product.find(find).limit(limitItems).skip(skip);
+
+  res.render("admin/pages/product-list", {
+    pageTitle: "Danh sách sản phẩm",
+    pagination: pagination,
+    productList: productList,
+  });
+};

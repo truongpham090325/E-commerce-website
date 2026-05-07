@@ -75,4 +75,6 @@ router.delete(
   productController.destroyAttributeDelete,
 );
 
+router.get("/list", productController.list);
+
 export default router;
