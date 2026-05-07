@@ -1307,6 +1307,8 @@ if (productCreateForm) {
       const position = event.target.position.value;
       const status = event.target.status.value;
       const category = getCheckBoxList("category");
+      const priceOld = event.target.priceOld.value;
+      const priceNew = event.target.priceNew.value;
       const description = tinymce.get("description").getContent();
       const content = tinymce.get("content").getContent();
       const images = getMultiFile("images");
@@ -1318,6 +1320,8 @@ if (productCreateForm) {
       formData.append("position", position);
       formData.append("status", status);
       formData.append("category", JSON.stringify(category));
+      formData.append("priceOld", priceOld);
+      formData.append("priceNew", priceNew);
       formData.append("description", description);
       formData.append("content", content);
       formData.append("images", JSON.stringify(images));
@@ -1562,3 +1566,40 @@ if (productEditAttributeForm) {
     });
 }
 // End productEditAttributeForm
+
+// button-render-variant
+const generateVariants = (attributes) => {
+  // Bước 1: Lấy ra danh sách các lựa chọn (options) cho từng thuộc tính
+  const optionList = attributes.map((attribute) => {
+    return attribute.options.map((option) => {
+      return {
+        attrId: attribute._id,
+        attrType: attribute.type,
+        label: option.label,
+        value: option.value,
+      };
+    });
+  });
+
+  // Bước 2: Tạo ra tổ hợp các biến thể
+  const variantList = optionList.reduce(
+    (a, b) => a.flatMap((x) => b.map((y) => [...x, y])),
+    [[]],
+  );
+
+  return variantList;
+};
+
+const buttonRenderVariant = document.querySelector("[button-render-variant]");
+if (buttonRenderVariant) {
+  buttonRenderVariant.addEventListener("click", () => {
+    const attr = buttonRenderVariant.getAttribute("button-render-variant");
+    const idList = getCheckBoxList(attr);
+    const attributeListChecked = attributeList.filter((item) =>
+      idList.includes(item._id),
+    );
+    const variantList = generateVariants(attributeListChecked);
+    console.log(variantList);
+  });
+}
+// End button-render-variant

@@ -43,6 +43,8 @@ export const createPost = (req: Request, res: Response, next: NextFunction) => {
     }),
     position: Joi.string().allow(""),
     category: Joi.string().allow(""),
+    priceOld: Joi.string().allow(""),
+    priceNew: Joi.string().allow(""),
     status: Joi.string().allow(""),
     description: Joi.string().allow(""),
     content: Joi.string().allow(""),

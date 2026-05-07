@@ -328,9 +328,14 @@ export const create = async (req: Request, res: Response) => {
 
   const categoryTree = buildCategoryTree(categoryList);
 
+  const attributeList = await AttributeProduct.find({
+    deleted: false,
+  });
+
   res.render("admin/pages/product-create", {
     pageTitle: "Tạo sản phẩm",
     categoryList: categoryTree,
+    attributeList: attributeList,
   });
 };
 
@@ -360,6 +365,16 @@ export const createPost = async (req: Request, res: Response) => {
       } else {
         req.body.position = 1;
       }
+    }
+
+    if (req.body.priceOld) {
+      req.body.priceOld = parseInt(req.body.priceOld);
+    }
+
+    if (req.body.priceNew) {
+      req.body.priceNew = parseInt(req.body.priceNew);
+    } else {
+      req.body.priceNew = parseInt(req.body.priceOld);
     }
 
     req.body.category = JSON.parse(req.body.category);

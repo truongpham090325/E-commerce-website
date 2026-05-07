@@ -7,6 +7,8 @@ const schema = new mongoose.Schema(
     position: Number,
     category: [String],
     images: [String],
+    priceOld: Number,
+    priceNew: Number,
     description: String,
     content: String,
     status: {
