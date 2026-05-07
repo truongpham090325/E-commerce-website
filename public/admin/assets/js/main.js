@@ -1309,6 +1309,7 @@ if (productCreateForm) {
       const category = getCheckBoxList("category");
       const priceOld = event.target.priceOld.value;
       const priceNew = event.target.priceNew.value;
+      const stock = event.target.stock.value;
       const description = tinymce.get("description").getContent();
       const content = tinymce.get("content").getContent();
       const images = getMultiFile("images");
@@ -1332,11 +1333,18 @@ if (productCreateForm) {
         } else {
           priceNew = priceOld;
         }
+        let stock = tr.querySelector("[stock]").value;
+        if (stock) {
+          stock = parseInt(stock);
+        } else {
+          stock = 0;
+        }
         variants.push({
           status: status,
           attributeValue: attributeValue,
           priceOld: priceOld,
           priceNew: priceNew,
+          stock: stock,
         });
       });
       // End variants
@@ -1350,6 +1358,7 @@ if (productCreateForm) {
       formData.append("category", JSON.stringify(category));
       formData.append("priceOld", priceOld);
       formData.append("priceNew", priceNew);
+      formData.append("stock", stock);
       formData.append("description", description);
       formData.append("content", content);
       formData.append("images", JSON.stringify(images));
@@ -1646,6 +1655,7 @@ if (buttonRenderVariant) {
     variantHeadHTML += `
       <th scope="col">Giá cũ</th>
       <th scope="col">Giá mới</th>
+      <th scope="col">Còn lại</th>
     `;
     variantHead.innerHTML = variantHeadHTML;
 
@@ -1677,6 +1687,9 @@ if (buttonRenderVariant) {
         </td>
         <td>
           <input class="form-control" type="number" value="${priceNew}" price-new>
+        </td>
+        <td>
+          <input class="form-control" type="number" value=0 stock>
         </td>
       `;
       tr += `</tr>`;

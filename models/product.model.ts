@@ -9,6 +9,7 @@ const schema = new mongoose.Schema(
     images: [String],
     priceOld: Number,
     priceNew: Number,
+    stock: Number,
     attributes: Array,
     variants: Array,
     description: String,

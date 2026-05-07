@@ -377,6 +377,12 @@ export const createPost = async (req: Request, res: Response) => {
       req.body.priceNew = parseInt(req.body.priceOld);
     }
 
+    if (req.body.stock) {
+      req.body.stock = parseInt(req.body.stock);
+    } else {
+      req.body.stock = 0;
+    }
+
     req.body.category = JSON.parse(req.body.category);
 
     req.body.images = JSON.parse(req.body.images);
