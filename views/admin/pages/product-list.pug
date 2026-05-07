@@ -62,9 +62,9 @@ block main
                     td #{item.position}
                     td
                       if (item.status == "draft")
-                        span(class="badge bg-dark") Bản nháp
+                        span(class="badge bg-waring") Bản nháp
                       else if (item.status == "active")
-                        span(class="badge bg-success") Hoạt động
+                        span(class="badge bg-primary") Hoạt động
                       else if (item.status == "inactive")
                         span(class="badge bg-danger") Tạm dừng
                     td #{item.view}

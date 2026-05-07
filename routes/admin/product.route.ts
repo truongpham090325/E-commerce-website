@@ -77,4 +77,13 @@ router.delete(
 
 router.get("/list", productController.list);
 
+router.get("/edit/:id", productController.edit);
+
+router.patch(
+  "/edit/:id",
+  upload.none(),
+  productValidate.createPost,
+  productController.editPatch,
+);
+
 export default router;

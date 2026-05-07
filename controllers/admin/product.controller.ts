@@ -119,7 +119,9 @@ export const editCategory = async (req: Request, res: Response) => {
       res.redirect(`/${pathAdmin}/product/category`);
       return;
     }
-    const categoryList = await CategoryProduct.find({});
+    const categoryList = await CategoryProduct.find({
+      deleted: false,
+    });
     const categoryTree = buildCategoryTree(categoryList);
 
     res.render("admin/pages/product-edit-category", {
@@ -408,7 +410,7 @@ export const createPost = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.json({
-      code: "success",
+      code: "error",
       message: "Tạo sản phẩm thất bại!",
     });
   }
@@ -719,4 +721,142 @@ export const list = async (req: Request, res: Response) => {
     pagination: pagination,
     productList: productList,
   });
+};
+
+export const edit = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const productDetail = await Product.findOne({
+      _id: id,
+    });
+
+    if (!productDetail) {
+      res.redirect(`/${pathAdmin}/product/list`);
+      return;
+    }
+
+    const categoryList = await CategoryProduct.find({
+      deleted: false,
+    });
+    const categoryTree = buildCategoryTree(categoryList);
+
+    const attributeList = await AttributeProduct.find({
+      deleted: false,
+    });
+
+    const attributeNameList: string[] = [];
+    productDetail.attributes.forEach((attrId) => {
+      const attributeInfo = attributeList.find((item) => item.id === attrId);
+      if (attributeInfo) {
+        attributeNameList.push(`${attributeInfo.name}`);
+      }
+    });
+
+    res.render("admin/pages/product-edit", {
+      pageTitle: "Chỉnh sửa sản phẩm",
+      productDetail: productDetail,
+      categoryList: categoryTree,
+      attributeList: attributeList,
+      attributeNameList: attributeNameList,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect(`/${pathAdmin}/product/list`);
+  }
+};
+
+export const editPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const productDetail = await Product.findOne({
+      _id: id,
+      deleted: false,
+    });
+
+    if (!productDetail) {
+      res.json({
+        code: "error",
+        message: "Dữ liệu không hợp lệ!",
+      });
+      return;
+    }
+
+    const existSlug = await Product.findOne({
+      _id: { $ne: id },
+      slug: req.body.slug,
+    });
+    if (existSlug) {
+      res.json({
+        code: "error",
+        message: "Đường dẫn đã tồn tại!",
+      });
+      return;
+    }
+
+    if (req.body.position) {
+      req.body.position = parseInt(req.body.position);
+    } else {
+      // Nếu không truyền position thì lấy position lớn nhất + 1
+      const recordMaxPosition = await Product.findOne({}).sort({
+        position: "desc",
+      });
+
+      if (recordMaxPosition && recordMaxPosition.position) {
+        req.body.position = recordMaxPosition.position + 1;
+      } else {
+        req.body.position = 1;
+      }
+    }
+
+    if (req.body.priceOld) {
+      req.body.priceOld = parseInt(req.body.priceOld);
+    }
+
+    if (req.body.priceNew) {
+      req.body.priceNew = parseInt(req.body.priceNew);
+    } else {
+      req.body.priceNew = parseInt(req.body.priceOld);
+    }
+
+    if (req.body.stock) {
+      req.body.stock = parseInt(req.body.stock);
+    } else {
+      req.body.stock = 0;
+    }
+
+    req.body.category = JSON.parse(req.body.category);
+
+    req.body.images = JSON.parse(req.body.images);
+
+    req.body.attributes = JSON.parse(req.body.attributes);
+
+    req.body.variants = JSON.parse(req.body.variants);
+
+    req.body.tags = JSON.parse(req.body.tags);
+
+    req.body.search = slugify(`${req.body.name}`, {
+      replacement: " ",
+      lower: true,
+    });
+
+    await Product.updateOne(
+      {
+        _id: id,
+        deleted: false,
+      },
+      req.body,
+    );
+
+    res.json({
+      code: "success",
+      message: "Cập nhập sản phẩm thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Cập nhập sản phẩm thất bại!",
+    });
+  }
 };
