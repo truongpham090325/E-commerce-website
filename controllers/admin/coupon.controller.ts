@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Coupon from "../../models/coupon.model";
 import moment from "moment";
 import slugify from "slugify";
+import { pathAdmin } from "../../configs/variable.config";
 
 export const create = (req: Request, res: Response) => {
   res.render("admin/pages/coupon-create", {
@@ -119,4 +120,111 @@ export const list = async (req: Request, res: Response) => {
     couponList: couponList,
     pagination: pagination,
   });
+};
+
+export const edit = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const couponDetail: any = await Coupon.findOne({
+      _id: id,
+      deleted: false,
+    });
+
+    if (!couponDetail) {
+      res.redirect(`/${pathAdmin}/coupon/list`);
+      return;
+    }
+
+    if (couponDetail.startDate) {
+      couponDetail.startDateFormat = moment(couponDetail.startDate).format(
+        "DD/MM/YYYY",
+      );
+    }
+    if (couponDetail.endDate) {
+      couponDetail.endDateFormat = moment(couponDetail.endDate).format(
+        "DD/MM/YYYY",
+      );
+    }
+
+    res.render("admin/pages/coupon-edit", {
+      pageTitle: "Chỉnh sửa mã giảm giá",
+      couponDetail: couponDetail,
+    });
+  } catch (error) {
+    res.redirect(`/${pathAdmin}/coupon/list`);
+  }
+};
+
+export const editPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const couponDetail = await Coupon.findOne({
+      _id: id,
+      deleted: false,
+    });
+
+    if (!couponDetail) {
+      res.json({
+        code: "error",
+        message: "Dữ liệu không hợp lệ!",
+      });
+      return;
+    }
+
+    const existCoupon = await Coupon.findOne({
+      _id: { $ne: id },
+      code: req.body.code,
+      deleted: false,
+    });
+
+    if (existCoupon) {
+      res.json({
+        code: "error",
+        message: "Mã giảm giá đã tồn tại!",
+      });
+      return;
+    }
+
+    req.body.value = req.body.value ? parseInt(req.body.value) : 0;
+    req.body.minOrderValue = req.body.minOrderValue
+      ? parseInt(req.body.minOrderValue)
+      : 0;
+    req.body.maxDiscountValue = req.body.maxDiscountValue
+      ? parseInt(req.body.maxDiscountValue)
+      : 0;
+    req.body.usageLimit = req.body.usageLimit
+      ? parseInt(req.body.usageLimit)
+      : 0;
+    req.body.startDate = req.body.startDate
+      ? moment(req.body.startDate, "DD/MM/YYYY").toDate()
+      : undefined;
+    req.body.endDate = req.body.endDate
+      ? moment(req.body.endDate, "DD/MM/YYYY").toDate()
+      : undefined;
+
+    req.body.search = slugify(`${req.body.code} ${req.body.name}`, {
+      replacement: " ",
+      lower: true,
+    });
+
+    await Coupon.updateOne(
+      {
+        _id: id,
+        deleted: false,
+      },
+      req.body,
+    );
+
+    res.json({
+      code: "success",
+      message: "Cập nhập mã giảm giá thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Tạo mã giảm giá thất bại!",
+    });
+  }
 };
