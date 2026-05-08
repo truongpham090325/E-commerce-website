@@ -12,17 +12,17 @@ block main
               h4.card-title #{pageTitle}
             // end col
             .col-auto          
-              a.btn.btn-info.me-1(
+              a.btn.btn-info.me-1.mb-1(
                 href=`/${pathAdmin}/product/export/csv`
                 )
                 i.fa-solid.fa-download.me-1
                 | Xuất Excel
-              a.btn.btn-danger.me-1(
+              a.btn.btn-danger.me-1.mb-1(
                 href=`/${pathAdmin}/product/trash`
                 )
                 i.far.fa-trash-alt.me-1
                 | Thùng rác
-              a.btn.btn-primary(
+              a.btn.btn-primary.mb-1(
                 href=`/${pathAdmin}/product/create`
                 )
                 i.fa-solid.fa-plus.me-1
@@ -35,6 +35,19 @@ block main
           .row
             .col-lg-6
               +form-search()
+            .col-lg-6
+              form.input-group.mb-3(
+                id="formImportExcel"
+                data-api=`/${pathAdmin}/product/import/csv`
+              )
+                input(
+                  class="form-control" 
+                  type="file" 
+                  name="file" 
+                  id="file"
+                  accept=".csv"
+                )
+                button.btn.btn-secondary Nhúng Excel
           .table-responsive
             table.table.table-striped.mb-0
               thead.table-light

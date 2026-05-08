@@ -1709,7 +1709,7 @@ if (buttonRenderVariant) {
 // End button-render-variant
 
 // select-tag
-const selectTag = document.querySelectorAll("[select-tag]");
+const selectTag = document.querySelector("[select-tag]");
 if (selectTag) {
   new Selectr("[select-tag]", {
     taggable: true,
@@ -1835,3 +1835,54 @@ if (productEditForm) {
     });
 }
 // End productEditForm
+
+// formImportExcel
+const formImportExcel = document.querySelector("#formImportExcel");
+if (formImportExcel) {
+  const validation = new JustValidate("#formImportExcel");
+
+  validation
+    .addField("#file", [
+      {
+        rule: "minFilesCount",
+        value: 1,
+        errorMessage: "Vui lòng chọn file CSV",
+      },
+      {
+        rule: "files",
+        value: {
+          files: {
+            extensions: ["csv"],
+            types: ["text/csv"],
+          },
+        },
+        errorMessage: "Vui lòng chọn đúng loại file CSV",
+      },
+    ])
+    .onSuccess((event) => {
+      const fileInput = event.target.querySelector("#file");
+      const file = fileInput.files[0]; // chỉ lấy 1 file đầu tiên
+      const api = formImportExcel.getAttribute("data-api");
+
+      // Tạo FormData
+      const formData = new FormData();
+      formData.append("file", file);
+
+      fetch(api, {
+        method: "POST",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if (data.code == "success") {
+            drawNotify("success", data.message);
+            location.reload();
+          }
+        });
+    });
+}
+// End formImportExcel

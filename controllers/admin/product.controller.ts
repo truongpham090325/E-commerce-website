@@ -6,6 +6,7 @@ import { pathAdmin } from "../../configs/variable.config";
 import Product from "../../models/product.model";
 import AttributeProduct from "../../models/attribute-product.model";
 import { Parser } from "json2csv";
+import Papa from "papaparse";
 
 export const category = async (req: Request, res: Response) => {
   const find: {
@@ -1006,6 +1007,53 @@ export const exportCSV = async (req: Request, res: Response) => {
     res.json({
       code: "error",
       message: "Lỗi Export!",
+    });
+  }
+};
+
+export const importCSVPost = async (req: Request, res: Response) => {
+  try {
+    // Chuyển file CSV sang JSON
+    const result = Papa.parse(`${req.file?.buffer}`, {
+      header: true,
+      skipEmptyLines: true,
+    });
+
+    const items: any[] = result.data;
+
+    for (const item of items) {
+      item.position = item.position ? parseInt(item.position) : 0;
+      item.category = item.category ? JSON.parse(item.category) : [];
+      item.priceOld = item.priceOld ? parseInt(item.priceOld) : 0;
+      item.priceNew = item.priceNew ? parseInt(item.priceNew) : 0;
+      item.stock = item.stock ? parseInt(item.stock) : 0;
+      item.attributes = item.attributes ? JSON.parse(item.attributes) : [];
+      item.variants = item.variants ? JSON.parse(item.variants) : [];
+      item.images = item.images ? JSON.parse(item.images) : [];
+      item.view = item.view ? parseInt(item.view) : 0;
+      item.tags = item.tags ? JSON.parse(item.tags) : [];
+      item.deleted = item.deleted == "true" ? true : false;
+      item.deletedAt = item.deletedAt ? new Date(item.deletedAt) : undefined;
+      item.createdAt = item.createdAt ? new Date(item.createdAt) : undefined;
+      item.updatedAt = item.updatedAt ? new Date(item.updatedAt) : undefined;
+
+      await Product.updateOne(
+        {
+          _id: item._id,
+        },
+        item,
+      );
+    }
+
+    res.json({
+      code: "success",
+      message: "Import thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Lỗi Import!",
     });
   }
 };
