@@ -5,6 +5,7 @@ import slugify from "slugify";
 import { pathAdmin } from "../../configs/variable.config";
 import Product from "../../models/product.model";
 import AttributeProduct from "../../models/attribute-product.model";
+import { Parser } from "json2csv";
 
 export const category = async (req: Request, res: Response) => {
   const find: {
@@ -981,6 +982,30 @@ export const destroyDelete = async (req: Request, res: Response) => {
     res.json({
       code: "error",
       message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
+
+export const exportCSV = async (req: Request, res: Response) => {
+  try {
+    const productList = await Product.find().lean();
+
+    // Chuyển JSON sang CSV
+    const parser = new Parser();
+    let csv = parser.parse(productList);
+
+    // Sửa lỗi tiếng việt
+    csv = "\ufeff" + csv;
+
+    res.header("Content-Type", "text/csv");
+    res.attachment("products.csv");
+
+    res.send(csv);
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Lỗi Export!",
     });
   }
 };

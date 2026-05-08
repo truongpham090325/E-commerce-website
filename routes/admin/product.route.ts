@@ -94,4 +94,6 @@ router.patch("/undo/:id", productController.undoPatch);
 
 router.delete("/destroy/:id", productController.destroyDelete);
 
+router.get("/export/csv", productController.exportCSV);
+
 export default router;

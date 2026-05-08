@@ -11,7 +11,12 @@ block main
             .col
               h4.card-title #{pageTitle}
             // end col
-            .col-auto
+            .col-auto          
+              a.btn.btn-info.me-1(
+                href=`/${pathAdmin}/product/export/csv`
+                )
+                i.fa-solid.fa-download.me-1
+                | Xuất Excel
               a.btn.btn-danger.me-1(
                 href=`/${pathAdmin}/product/trash`
                 )
