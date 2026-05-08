@@ -16,4 +16,6 @@ router.post(
   couponController.createPost,
 );
 
+router.get("/list", couponController.list);
+
 export default router;
