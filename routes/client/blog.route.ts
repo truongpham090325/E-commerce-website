@@ -11,4 +11,11 @@ router.get(
   blogController.blogByCategory,
 );
 
+router.get(
+  "/detail/:slug",
+  blogMiddleware.getPopularBlog,
+  blogMiddleware.getPopularCategoryBlog,
+  blogController.detail,
+);
+
 export default router;

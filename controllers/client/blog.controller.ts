@@ -92,3 +92,25 @@ export const blogByCategory = async (req: Request, res: Response) => {
     res.redirect("/");
   }
 };
+
+export const detail = async (req: Request, res: Response) => {
+  try {
+    const blogDetail: any = await Blog.findOne({
+      slug: req.params.slug,
+      deleted: false,
+      status: "published",
+    });
+
+    if (!blogDetail) {
+      res.redirect("/");
+      return;
+    }
+
+    res.render("client/pages/blog-detail", {
+      pageTitle: blogDetail.name,
+      blogDetail: blogDetail,
+    });
+  } catch (error) {
+    res.redirect("/");
+  }
+};
