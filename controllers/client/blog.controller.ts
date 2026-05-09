@@ -3,6 +3,7 @@ import CategoryBlog from "../../models/category-blog.model";
 import Blog from "../../models/blog.model";
 import AccountAdmin from "../../models/account-admin.model";
 import moment from "moment";
+import slugify from "slugify";
 
 export const blogByCategory = async (req: Request, res: Response) => {
   try {
@@ -21,6 +22,7 @@ export const blogByCategory = async (req: Request, res: Response) => {
       category: string;
       deleted: boolean;
       status: string;
+      search?: RegExp;
     } = {
       category: categoryDetail.id,
       deleted: false,
@@ -28,7 +30,7 @@ export const blogByCategory = async (req: Request, res: Response) => {
     };
 
     // Phân trang
-    const limitItems = 2;
+    const limitItems = 9;
     let page = 1;
     if (req.query.page) {
       const currentPage = parseInt(`${req.query.page}`);
@@ -44,6 +46,17 @@ export const blogByCategory = async (req: Request, res: Response) => {
       currentPage: page,
     };
     // Hết Phân trang
+
+    // Tìm kiếm
+    if (req.query.keyword) {
+      const keyword = slugify(`${req.query.keyword}`, {
+        replacement: " ",
+        lower: true, // Chữ thường
+      });
+      const keywordRegex = new RegExp(keyword, "i");
+      find.search = keywordRegex;
+    }
+    // Hết Tìm kiếm
 
     const blogList: any = await Blog.find(find).limit(limitItems).skip(skip);
 
@@ -68,8 +81,6 @@ export const blogByCategory = async (req: Request, res: Response) => {
         }
       }
     }
-
-    console.log(pagination);
 
     res.render("client/pages/blog-by-category", {
       pageTitle: "Danh sách bài viết theo danh mục",
