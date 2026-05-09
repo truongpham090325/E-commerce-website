@@ -17,11 +17,35 @@ export const blogByCategory = async (req: Request, res: Response) => {
       return;
     }
 
-    const blogList: any = await Blog.find({
+    const find: {
+      category: string;
+      deleted: boolean;
+      status: string;
+    } = {
       category: categoryDetail.id,
       deleted: false,
       status: "published",
-    });
+    };
+
+    // Phân trang
+    const limitItems = 2;
+    let page = 1;
+    if (req.query.page) {
+      const currentPage = parseInt(`${req.query.page}`);
+      if (currentPage > 0) {
+        page = currentPage;
+      }
+    }
+    const totalRecord = await Blog.countDocuments(find);
+    const totalPage = Math.ceil(totalRecord / limitItems);
+    const skip = (page - 1) * limitItems;
+    const pagination = {
+      totalPage: totalPage,
+      currentPage: page,
+    };
+    // Hết Phân trang
+
+    const blogList: any = await Blog.find(find).limit(limitItems).skip(skip);
 
     for (const item of blogList) {
       if (item.updatedBy) {
@@ -45,10 +69,13 @@ export const blogByCategory = async (req: Request, res: Response) => {
       }
     }
 
+    console.log(pagination);
+
     res.render("client/pages/blog-by-category", {
       pageTitle: "Danh sách bài viết theo danh mục",
       categoryDetail: categoryDetail,
       blogList: blogList,
+      pagination: pagination,
     });
   } catch (error) {
     res.redirect("/");
