@@ -22,14 +22,9 @@ block main
       .row
         .col-xl-9.col-lg-8
           .row
-            .col-xl-4.col-md-6.wow.fadeInUp
-              +blog-item()
-            .col-xl-4.col-md-6.wow.fadeInUp
-              +blog-item()
-            .col-xl-4.col-md-6.wow.fadeInUp
-              +blog-item()
-            .col-xl-4.col-md-6.wow.fadeInUp
-              +blog-item()
+            each item in blogList
+              .col-xl-4.col-md-6.wow.fadeInUp
+                +blog-item(item)
             .row
             //- Pagination
             include ../partials/pagination-area.pug

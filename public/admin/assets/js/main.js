@@ -1432,8 +1432,13 @@ if (buttonCopyMulti) {
     listCheckboxInputChecked.forEach((input) => {
       listLink.push(input.value);
     });
-    window.navigator.clipboard.writeText(JSON.stringify(listLink));
-    notyf.success("Đã copy!");
+    if (listLink.length < 2) {
+      window.navigator.clipboard.writeText(listLink);
+      notyf.success("Đã copy!");
+    } else {
+      window.navigator.clipboard.writeText(JSON.stringify(listLink));
+      notyf.success("Đã copy!");
+    }
   });
 }
 // End button-copy-multi
