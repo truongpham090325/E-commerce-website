@@ -7,6 +7,7 @@ const router = Router();
 router.get(
   "/category/:slug",
   blogMiddleware.getPopularBlog,
+  blogMiddleware.getPopularCategoryBlog,
   blogController.blogByCategory,
 );
 
