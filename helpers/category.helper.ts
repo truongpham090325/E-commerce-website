@@ -11,6 +11,9 @@ export function buildCategoryTree(categories: any, parentId: string = "") {
     return {
       id: category.id,
       name: category.name,
+      avatar: category.avatar,
+      slug: category.slug,
+      status: category.status,
       children: children,
     };
   });
