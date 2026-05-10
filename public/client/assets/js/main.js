@@ -45,3 +45,33 @@ if (listButtonShare.length > 0) {
   });
 }
 // End button-share
+
+// filter-product-status
+const listFilterProductStatus = document.querySelectorAll(
+  "[filter-product-status]",
+);
+if (listFilterProductStatus.length > 0) {
+  const url = new URL(window.location.href);
+
+  listFilterProductStatus.forEach((input) => {
+    const name = input.value;
+
+    input.addEventListener("change", () => {
+      const value = input.checked;
+
+      if (value) {
+        url.searchParams.set(name, value);
+      } else {
+        url.searchParams.delete(name);
+      }
+      window.location.href = url.href;
+    });
+
+    // Hiển thị giá trị mặc định
+    const valueCurrent = url.searchParams.get(name);
+    if (valueCurrent) {
+      input.checked = valueCurrent;
+    }
+  });
+}
+// End filter-product-status

@@ -23,6 +23,12 @@ export const productByCategory = async (req: Request, res: Response) => {
       $gte: Number;
       $lte: Number;
     };
+    discount?: {
+      $gt: Number;
+    };
+    stock?: {
+      $gt: Number;
+    };
   } = {
     category: categoryDetail.id,
     deleted: false,
@@ -91,6 +97,22 @@ export const productByCategory = async (req: Request, res: Response) => {
     };
   }
   // Hết Mức giá
+
+  // Giảm giá
+  if (req.query.onSale && req.query.onSale == "true") {
+    find.discount = {
+      $gt: 0,
+    };
+  }
+  // Hết Giảm giá
+
+  // Còn hàng
+  if (req.query.inStock && req.query.inStock == "true") {
+    find.stock = {
+      $gt: 0,
+    };
+  }
+  // Hết Còn hàng
 
   const productList: any = await Product.find(find)
     .sort(sort)
