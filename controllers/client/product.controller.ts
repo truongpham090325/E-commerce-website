@@ -19,6 +19,10 @@ export const productByCategory = async (req: Request, res: Response) => {
     deleted: boolean;
     status: string;
     search?: RegExp;
+    priceNew?: {
+      $gte: Number;
+      $lte: Number;
+    };
   } = {
     category: categoryDetail.id,
     deleted: false,
@@ -76,6 +80,17 @@ export const productByCategory = async (req: Request, res: Response) => {
     sort.position = "desc";
   }
   // Hết Sắp xếp
+
+  // Mức giá
+  if (req.query.price) {
+    const [priceMin, priceMax] = `${req.query.price}`.split("-");
+
+    find.priceNew = {
+      $gte: parseInt(priceMin),
+      $lte: parseInt(priceMax),
+    };
+  }
+  // Hết Mức giá
 
   const productList: any = await Product.find(find)
     .sort(sort)
