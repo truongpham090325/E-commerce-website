@@ -106,6 +106,26 @@ export const detail = async (req: Request, res: Response) => {
       return;
     }
 
+    if (blogDetail.updatedBy) {
+      const accountAdmin = await AccountAdmin.findOne({
+        _id: blogDetail.updatedBy,
+      });
+
+      if (accountAdmin) {
+        blogDetail.authorName = accountAdmin.fullName;
+        blogDetail.date = moment(blogDetail.createdAt).format("DD/MM/YYYY");
+      }
+    } else {
+      const accountAdmin = await AccountAdmin.findOne({
+        _id: blogDetail.createdBy,
+      });
+
+      if (accountAdmin) {
+        blogDetail.authorName = accountAdmin.fullName;
+        blogDetail.date = moment(blogDetail.createdAt).format("DD/MM/YYYY");
+      }
+    }
+
     res.render("client/pages/blog-detail", {
       pageTitle: blogDetail.name,
       blogDetail: blogDetail,

@@ -11,7 +11,7 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 
 const app = express();
-const port = 3333;
+const port = 4000;
 
 // Kết nối cơ sở dữ liệu
 connectDB();
