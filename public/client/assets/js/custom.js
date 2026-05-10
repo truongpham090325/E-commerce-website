@@ -51,28 +51,31 @@ $(function () {
   $(".select_js").niceSelect();
 
   // selectJS
-  const selectJS = document.querySelector("[select-js]");
-  if (selectJS) {
-    const url = new URL(window.location.href);
+  const listSelectJS = document.querySelectorAll("[select-js]");
+  if (listSelectJS.length > 0) {
+    listSelectJS.forEach((selectJS) => {
+      const url = new URL(window.location.href);
+      const feildName = selectJS.getAttribute("select-js");
 
-    selectJS.addEventListener("click", (event) => {
-      if (event.target.classList.contains("option")) {
-        const value = event.target.getAttribute("data-value");
-        if (value) {
-          url.searchParams.set("limitItems", value);
-        } else {
-          url.searchParams.delete("limitItems");
+      selectJS.addEventListener("click", (event) => {
+        if (event.target.classList.contains("option")) {
+          const value = event.target.getAttribute("data-value");
+          if (value) {
+            url.searchParams.set(feildName, value);
+          } else {
+            url.searchParams.delete(feildName);
+          }
+          window.location.href = url.href;
         }
-        window.location.href = url.href;
+      });
+
+      // Hiển thị lựa chọn mặc định
+      const currentValue = url.searchParams.get(feildName);
+      if (currentValue) {
+        selectJS.querySelector(".show").value = currentValue;
+        $(".show.select_js").niceSelect("update");
       }
     });
-
-    // Hiển thị lựa chọn mặc định
-    const currentValue = url.searchParams.get("limitItems");
-    if (currentValue) {
-      selectJS.querySelector(".show").value = currentValue;
-      $(".show.select_js").niceSelect("update");
-    }
   }
   // End selectJS
 

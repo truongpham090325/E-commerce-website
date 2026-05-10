@@ -8039,18 +8039,18 @@ footer {
   font-size: 16px;
 }
 
-.product_page_sorting .select_js.show {
+/* .product_page_sorting .select_js.show {
   width: 150px;
-}
+} */
 
-.product_page_sorting .nice-select {
+/* .product_page_sorting .nice-select {
   width: 180px;
   border-radius: 6px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   -ms-border-radius: 6px;
   -o-border-radius: 6px;
-}
+} */
 
 .product_page_sorting .nice-select .current {
   color: var(--colorBlack);
