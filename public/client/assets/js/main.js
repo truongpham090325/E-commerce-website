@@ -36,3 +36,12 @@ if (formSearch) {
   });
 }
 // End formSearch
+
+// button-share
+const listButtonShare = document.querySelectorAll("[button-share]");
+if (listButtonShare.length > 0) {
+  listButtonShare.forEach((button) => {
+    button.href = button.href + window.location.href;
+  });
+}
+// End button-share
