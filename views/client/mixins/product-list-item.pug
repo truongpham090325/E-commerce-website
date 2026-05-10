@@ -1,4 +1,4 @@
-mixin product-list-item()
+mixin product-list-item(item)
   div(class="product_list_item product_item_2 product_item")
     .row.align-items-center
       .col-md-5.col-sm-6.col-xxl-4
@@ -8,10 +8,9 @@ mixin product-list-item()
             src="/client/assets/images/product_17.png"
             )
           ul(class="discount_list")
-            li.new new
             li.discount
               b -
-              | 75%
+              | #{item.discount}%
           ul(class="btn_list")
             li
               a(href="#")
@@ -27,29 +26,21 @@ mixin product-list-item()
                   )
       .col-md-7.col-sm-6.col-xxl-8
         div(class="product_text")
-          a.title(href="shop_details.html")
-            | Denim Jeans Pants For
-            |   Men
+          a.title(href=`/product/detail/${item.slug}`)
+            | #{item.name}
           p.rating
             i.fas.fa-star
             i.fas.fa-star
             i.fas.fa-star
             i.fas.fa-star
             i.fas.fa-star
-            span (27 reviews)
+            span (0 Bình luận)
           p.price
-            | $50.00
-            del $60.00
-          ul.color
-            li.active(style="background:#DB4437")
-            li(style="background:#638C34")
-            li(style="background:#1C58F2")
-            li(style="background:#ffa500")
-          p(class="short_description")
-            | Lorem ipsum dolor sit amet consectetur,
-            |   adipisicing elit. Exercitationem inventore libero accusantium ex
-            |   ipsam, provident voluptas facere nemo, quas assumenda
-            |   reprehenderit nihil ratione quaerat ad.
+            | #{item.priceNew.toLocaleString("vi-VN")}
+            del #{item.priceOld.toLocaleString("vi-VN")}
+          ul.mb-2.color
+            each color in item.colorList
+              li(style=`background:${color}`)
           a(
             href="shop_details.html" 
             class="common_btn"
