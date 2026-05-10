@@ -4,8 +4,8 @@ mixin product-list-item(item)
       .col-md-5.col-sm-6.col-xxl-4
         div(class="product_img")
           img.img-fluid.w-100(
-            alt="Product" 
-            src="/client/assets/images/product_17.png"
+            alt=item.name 
+            src=`${domainCDN}${item.images[0]}`
             )
           ul(class="discount_list")
             li.discount
