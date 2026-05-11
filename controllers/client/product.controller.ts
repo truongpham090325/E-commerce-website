@@ -1,13 +1,25 @@
 import { Request, Response } from "express";
 import CategoryProduct from "../../models/category-product.model";
 import Product from "../../models/product.model";
+import slugify from "slugify";
 
 export const productByCategory = async (req: Request, res: Response) => {
-  const categoryDetail: any = await CategoryProduct.findOne({
-    slug: req.params.slug,
-    deleted: false,
-    status: "active",
-  });
+  const slug = req.params.slug;
+  let categoryDetail: any = null;
+
+  if (slug) {
+    categoryDetail = await CategoryProduct.findOne({
+      slug: slug,
+      deleted: false,
+      status: "active",
+    });
+  } else {
+    categoryDetail = {
+      id: "",
+      name: "Tất cả sản phẩm",
+      slug: "",
+    };
+  }
 
   if (!categoryDetail) {
     res.redirect("/");
@@ -15,7 +27,7 @@ export const productByCategory = async (req: Request, res: Response) => {
   }
 
   const find: {
-    category: string;
+    category?: string;
     deleted: boolean;
     status: string;
     search?: RegExp;
@@ -31,7 +43,6 @@ export const productByCategory = async (req: Request, res: Response) => {
     };
     $or?: any;
   } = {
-    category: categoryDetail.id,
     deleted: false,
     status: "active",
   };
@@ -87,6 +98,24 @@ export const productByCategory = async (req: Request, res: Response) => {
     sort.position = "desc";
   }
   // Hết Sắp xếp
+
+  // Danh mục
+  if (categoryDetail.id) {
+    find.category = categoryDetail.id;
+  }
+  // hết Danh mục
+
+  // Từ khóa
+  if (req.query.keyword) {
+    const keyword = slugify(`${req.query.keyword}`, {
+      replacement: " ",
+      lower: true,
+    });
+
+    const keywordRegex = new RegExp(keyword, "i");
+    find.search = keywordRegex;
+  }
+  // End Từ khóa
 
   // Mức giá
   if (req.query.price) {
