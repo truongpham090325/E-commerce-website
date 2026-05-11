@@ -26,6 +26,8 @@ header(class="header_2")
             each item in categoryProductList
               option(value=item.slug) #{item.name}
           .input
+            span(class="inner-voice" button-voice)
+              <i class="fas fa-microphone"></i>
             input(
               placeholder="Tìm kiếm sản phẩm..." 
               type="text"

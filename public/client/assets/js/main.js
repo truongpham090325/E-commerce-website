@@ -23,7 +23,7 @@ const formSearch = document.querySelector("[form-search]");
 if (formSearch) {
   const url = new URL(window.location.href);
 
-  search.addEventListener("submit", (event) => {
+  formSearch.addEventListener("submit", (event) => {
     event.preventDefault();
     const value = event.target.keyword.value;
 
@@ -160,6 +160,8 @@ if (formSearchProduct) {
       url.pathname = `/product/category`;
     }
 
+    url.searchParams.delete("category");
+
     if (keyword) {
       url.searchParams.set("keyword", keyword);
     } else {
@@ -168,5 +170,27 @@ if (formSearchProduct) {
 
     window.location.href = url.href;
   });
+
+  // Tìm kiếm bằng giọng nói
+  const buttonVoice = document.querySelector("[button-voice]");
+  if (buttonVoice) {
+    buttonVoice.addEventListener("click", () => {
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      const voice = new SpeechRecognition();
+      voice.lang = "vi-VN";
+      voice.start();
+
+      voice.onresult = (event) => {
+        const value = event.results[0][0].transcript;
+        if (value) {
+          formSearchProduct.keyword.value = value;
+          formSearchProduct.requestSubmit();
+        }
+      };
+    });
+  }
+  // Hết tìm kiếm bằng giọng nói
 }
 // End form-search-product
