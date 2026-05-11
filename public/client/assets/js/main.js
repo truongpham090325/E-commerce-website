@@ -194,3 +194,51 @@ if (formSearchProduct) {
   // Hết tìm kiếm bằng giọng nói
 }
 // End form-search-product
+
+// suggest product
+const input = formSearchProduct.querySelector("input[name='keyword']");
+const boxSuggest = formSearchProduct.querySelector(".inner-suggest");
+const boxSuggestLisst = formSearchProduct.querySelector(".inner-list");
+let timeout;
+
+input.addEventListener("input", () => {
+  clearTimeout(timeout);
+
+  timeout = setTimeout(() => {
+    const keyword = input.value;
+    if (keyword) {
+      fetch(`/product/suggest?keyword=${keyword}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "success") {
+            const htmls = data.list.map((item) => {
+              return `
+                <a class="inner-item" href="/product/detail/${item.slug}">
+                  <img class="inner-image" src="${domainCDN}${item.images[0]}">
+                  <div class="inner-info" bis_skin_checked="1">
+                    <div class="inner-name" bis_skin_checked="1">
+                      ${item.name}
+                    </div>
+                    <div class="inner-prices" bis_skin_checked="1">
+                      <div class="inner-price-new" bis_skin_checked="1">${item.priceNew.toLocaleString("vi-VN")}đ</div>
+                      <div class="inner-price-old" bis_skin_checked="1">${item.priceOld.toLocaleString("vi-VN")}đ</div>
+                    </div>
+                  </div>
+                </a>
+              `;
+            });
+
+            boxSuggestLisst.innerHTML = htmls.join("");
+            if (data.list.length > 0) {
+              boxSuggest.style.display = "block";
+            } else {
+              boxSuggest.style.display = "none";
+            }
+          }
+        });
+    } else {
+      boxSuggest.style.display = "none";
+    }
+  }, 500);
+});
+// End suggest product
