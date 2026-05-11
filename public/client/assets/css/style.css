@@ -8576,6 +8576,7 @@ footer {
   color: var(--colorBlack);
   font-size: 14px;
   margin-bottom: 5px;
+  text-align: center;
 }
 
 .shop_details_sidebar_store .store_name {
@@ -8586,6 +8587,7 @@ footer {
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin-bottom: 15px;
+  text-align: center;
 }
 
 .shop_details_sidebar_store ul {
