@@ -92,3 +92,47 @@ if (listButtonSlug.length > 0) {
   });
 }
 // End button-slug
+
+// filter-attribute
+const listFilterAttribute = document.querySelectorAll("[filter-attribute]");
+if (listFilterAttribute.length > 0) {
+  const url = new URL(window.location.href);
+
+  listFilterAttribute.forEach((filterAttribute) => {
+    const id = filterAttribute.getAttribute("filter-attribute");
+    const listInput = filterAttribute.querySelectorAll(
+      'input[type="checkbox"]',
+    );
+
+    listInput.forEach((input) => {
+      input.addEventListener("change", () => {
+        const listInputChecked = filterAttribute.querySelectorAll(
+          'input[type="checkbox"]:checked',
+        );
+        const listValue = [];
+        listInputChecked.forEach((inputChecked) => {
+          listValue.push(inputChecked.value);
+        });
+
+        if (listInputChecked.length > 0) {
+          url.searchParams.set(`attribute_${id}`, listValue.join(","));
+        } else {
+          url.searchParams.delete(`attribute_${id}`);
+        }
+        window.location.href = url.href;
+      });
+    });
+
+    // Hiển thị giá trị mặc định
+    const listhValueCurrent = url.searchParams.get(`attribute_${id}`);
+    if (listhValueCurrent) {
+      const listValue = listhValueCurrent.split(",");
+      listInput.forEach((input) => {
+        if (listValue.includes(input.value)) {
+          input.checked = true;
+        }
+      });
+    }
+  });
+}
+// End filter-attribute

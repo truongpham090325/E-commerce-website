@@ -29,6 +29,7 @@ export const productByCategory = async (req: Request, res: Response) => {
     stock?: {
       $gt: Number;
     };
+    $or?: any;
   } = {
     category: categoryDetail.id,
     deleted: false,
@@ -113,6 +114,35 @@ export const productByCategory = async (req: Request, res: Response) => {
     };
   }
   // Hết Còn hàng
+
+  // Thuộc tính
+  const attributeFilters: any[] = [];
+
+  Object.keys(req.query).forEach((key) => {
+    if (key.startsWith("attribute_")) {
+      const attrId = key.replace("attribute_", "");
+      const values = `${req.query[key]}`.split("-");
+
+      attributeFilters.push({
+        variants: {
+          $elemMatch: {
+            status: true,
+            attributeValue: {
+              $elemMatch: {
+                attrId: attrId,
+                value: { $in: values },
+              },
+            },
+          },
+        },
+      });
+
+      if (attributeFilters.length > 0) {
+        find.$or = attributeFilters;
+      }
+    }
+  });
+  // Hết Thuộc tính
 
   const productList: any = await Product.find(find)
     .sort(sort)
