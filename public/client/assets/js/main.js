@@ -75,3 +75,20 @@ if (listFilterProductStatus.length > 0) {
   });
 }
 // End filter-product-status
+
+// button-slug
+const listButtonSlug = document.querySelectorAll("[button-slug]");
+if (listButtonSlug.length > 0) {
+  const url = new URL(window.location.href);
+
+  listButtonSlug.forEach((button) => {
+    button.addEventListener("click", () => {
+      const slug = button.getAttribute("button-slug");
+      if (slug) {
+        url.pathname = `/product/category/${slug}`;
+        window.location.href = url.href;
+      }
+    });
+  });
+}
+// End button-slug
