@@ -302,7 +302,7 @@ export const detail = async (req: Request, res: Response) => {
 
     // Sản phẩm mua kèm
     const boughtTogetherProducts = await Product.find({
-      category: { $in: productDetail.category },
+      _id: { $in: productDetail.boughtTogether },
       deleted: false,
       status: "active",
     }).sort({
