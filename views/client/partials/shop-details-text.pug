@@ -42,6 +42,10 @@ div(class="shop_details_text")
       input(
         placeholder="01" 
         type="text"
+        class="input-quantity"
+        min="1"
+        max=productDetail.stock
+        readonly
         )
       button.plus
         i.fal.fa-plus

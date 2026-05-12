@@ -1,3 +1,31 @@
+// Khởi tạo thư viện Notyf
+var notyf = new Notyf({
+  duration: 3000,
+  position: { x: "right", y: "top" },
+  dismissible: true,
+});
+
+const notifyData = sessionStorage.getItem("notify");
+if (notifyData) {
+  const { type, message } = JSON.parse(notifyData);
+  if (type == "success") {
+    notyf.success(message);
+  } else if (type == "error") {
+    notyf.error(message);
+  }
+  sessionStorage.removeItem("notify");
+}
+
+const drawNotify = (type, message) => {
+  sessionStorage.setItem(
+    "notify",
+    JSON.stringify({
+      type: type,
+      message: message,
+    }),
+  );
+};
+
 // pagination
 const pagination = document.querySelector(".pagination");
 if (pagination) {
@@ -249,6 +277,9 @@ if (shopDetailsText) {
   const elementStock = shopDetailsText.querySelector(".stock");
   const elementPriceNew = shopDetailsText.querySelector(".price-new");
   const elementPriceOld = shopDetailsText.querySelector(".price-old");
+  const inputQuantity = shopDetailsText.querySelector(".input-quantity");
+  const buttonPlus = shopDetailsText.querySelector(".plus");
+  const buttonMinus = shopDetailsText.querySelector(".minus");
 
   const selected = {};
 
@@ -285,17 +316,41 @@ if (shopDetailsText) {
         if (variantMatched) {
           if (variantMatched.stock > 0) {
             elementStock.innerHTML = `Còn hàng (${variantMatched.stock})`;
+            elementStock.classList.remove("out_stock");
+            inputQuantity.value = 1;
           } else {
             elementStock.innerHTML = `Hết hàng`;
             elementStock.classList.add("out_stock");
+            inputQuantity.value = 0;
           }
 
           elementPriceNew.innerHTML =
             variantMatched.priceNew.toLocaleString("vi-VN");
           elementPriceOld.innerHTML =
             variantMatched.priceOld.toLocaleString("vi-VN");
+
+          // Gán lại số lượng tối đa được phép đặt
+          inputQuantity.max = variantMatched.stock;
         }
       }
+
+      // Tăng số lượng
+      buttonPlus.addEventListener("click", () => {
+        const quantity = parseInt(inputQuantity.value);
+        const max = parseInt(inputQuantity.max);
+        if (quantity < max) {
+          inputQuantity.value = quantity + 1;
+        }
+      });
+
+      // Giảm số lượng
+      buttonMinus.addEventListener("click", () => {
+        const quantity = parseInt(inputQuantity.value);
+        const min = parseInt(inputQuantity.min);
+        if (quantity < min) {
+          inputQuantity.value = quantity - 1;
+        }
+      });
     });
   });
 }
