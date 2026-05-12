@@ -19,7 +19,8 @@ const schema = new mongoose.Schema(
     variants: Array,
     description: String,
     content: String,
-    tags: Array,
+    tags: [String],
+    boughtTogether: [String],
     status: {
       type: String,
       enum: ["draft", "active", "inactive"], // draft – Bản nháp, active – Hoạt động, inactive – Tạm dừng

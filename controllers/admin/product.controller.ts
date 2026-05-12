@@ -337,10 +337,23 @@ export const create = async (req: Request, res: Response) => {
     deleted: false,
   });
 
+  // Danh sách sản phẩm
+  const productList = await Product.find({
+    deleted: false,
+    status: "active",
+  })
+    .sort({
+      position: "desc",
+    })
+    .select("id name")
+    .lean();
+  // Hết Danh sách sản phẩm
+
   res.render("admin/pages/product-create", {
     pageTitle: "Tạo sản phẩm",
     categoryList: categoryTree,
     attributeList: attributeList,
+    productList: productList,
   });
 };
 
@@ -401,6 +414,8 @@ export const createPost = async (req: Request, res: Response) => {
     req.body.variants = JSON.parse(req.body.variants);
 
     req.body.tags = JSON.parse(req.body.tags);
+
+    req.body.boughtTogether = JSON.parse(req.body.boughtTogether);
 
     req.body.sku = generateRandomString(10).toUpperCase();
 
@@ -761,12 +776,26 @@ export const edit = async (req: Request, res: Response) => {
       }
     });
 
+    // Danh sách sản phẩm
+    const productList = await Product.find({
+      _id: { $ne: productDetail.id },
+      deleted: false,
+      status: "active",
+    })
+      .sort({
+        position: "desc",
+      })
+      .select("id name")
+      .lean();
+    // Hết Danh sách sản phẩm
+
     res.render("admin/pages/product-edit", {
       pageTitle: "Chỉnh sửa sản phẩm",
       productDetail: productDetail,
       categoryList: categoryTree,
       attributeList: attributeList,
       attributeNameList: attributeNameList,
+      productList: productList,
     });
   } catch (error) {
     console.log(error);
@@ -847,6 +876,8 @@ export const editPatch = async (req: Request, res: Response) => {
     req.body.variants = JSON.parse(req.body.variants);
 
     req.body.tags = JSON.parse(req.body.tags);
+
+    req.body.boughtTogether = JSON.parse(req.body.boughtTogether);
 
     if (!req.body.sku) {
       req.body.sku = generateRandomString(10).toUpperCase();
