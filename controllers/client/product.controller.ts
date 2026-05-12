@@ -3,6 +3,7 @@ import CategoryProduct from "../../models/category-product.model";
 import Product from "../../models/product.model";
 import slugify from "slugify";
 import AttributeProduct from "../../models/attribute-product.model";
+import { formatProductItem } from "../../helpers/product.helper";
 
 export const productByCategory = async (req: Request, res: Response) => {
   const slug = req.params.slug;
@@ -180,23 +181,7 @@ export const productByCategory = async (req: Request, res: Response) => {
     .skip(skip);
 
   for (const item of productList) {
-    // giảm giá
-    item.discount = Math.floor(
-      ((item.priceOld - item.priceNew) / item.priceOld) * 100,
-    );
-
-    const colorSet = new Set();
-    item.variants
-      .filter((variant: any) => variant.status == true)
-      .forEach((variant: any) => {
-        variant.attributeValue.forEach((attr: any) => {
-          if (attr.attrType == "color") {
-            colorSet.add(attr.value);
-          }
-        });
-      });
-
-    item.colorList = [...colorSet];
+    formatProductItem(item);
   }
 
   res.render("client/pages/product-by-category", {
@@ -298,10 +283,28 @@ export const detail = async (req: Request, res: Response) => {
     productDetail.categoryList = categoryList;
     // Hết Danh sách danh mục
 
+    // Sản phẩm liên quan
+    const relatedProducts = await Product.find({
+      category: { $in: productDetail.category },
+      deleted: false,
+      status: "active",
+      _id: { $ne: productDetail._id }, // Loại bỏ sản phẩm hiện tại
+    })
+      .limit(10)
+      .sort({
+        view: "desc",
+      });
+
+    for (const item of relatedProducts) {
+      formatProductItem(item);
+    }
+    // Hết Sản phẩm liên quan
+
     res.render("client/pages/product-detail", {
       pageTitle: productDetail.name,
       productDetail: productDetail,
       attributeList: attributeList,
+      relatedProducts: relatedProducts,
     });
   } catch (error) {
     console.log(error);
