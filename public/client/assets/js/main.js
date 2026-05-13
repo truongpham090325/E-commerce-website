@@ -281,6 +281,10 @@ if (shopDetailsText) {
   const buttonPlus = shopDetailsText.querySelector(".plus");
   const buttonMinus = shopDetailsText.querySelector(".minus");
 
+  if (inputQuantity && !inputQuantity.value) {
+    inputQuantity.value = 1;
+  }
+
   const selected = {};
 
   const listElementLiVariant = shopDetailsText.querySelectorAll(
@@ -329,29 +333,29 @@ if (shopDetailsText) {
           elementPriceOld.innerHTML =
             variantMatched.priceOld.toLocaleString("vi-VN");
 
-          // Gán lại số lượng tối đa được phép đặt
+      // Gán lại số lượng tối đa được phép đặt
           inputQuantity.max = variantMatched.stock;
         }
       }
-
-      // Tăng số lượng
-      buttonPlus.addEventListener("click", () => {
-        const quantity = parseInt(inputQuantity.value);
-        const max = parseInt(inputQuantity.max);
-        if (quantity < max) {
-          inputQuantity.value = quantity + 1;
-        }
-      });
-
-      // Giảm số lượng
-      buttonMinus.addEventListener("click", () => {
-        const quantity = parseInt(inputQuantity.value);
-        const min = parseInt(inputQuantity.min);
-        if (quantity < min) {
-          inputQuantity.value = quantity - 1;
-        }
-      });
     });
+  });
+
+  // Tăng số lượng
+  buttonPlus.addEventListener("click", () => {
+    const quantity = parseInt(inputQuantity.value);
+    const max = parseInt(inputQuantity.max);
+    if (quantity < max) {
+      inputQuantity.value = quantity + 1;
+    }
+  });
+
+  // Giảm số lượng
+  buttonMinus.addEventListener("click", () => {
+    const quantity = parseInt(inputQuantity.value);
+    const min = parseInt(inputQuantity.min);
+    if (quantity > min) {
+      inputQuantity.value = quantity - 1;
+    }
   });
 }
 // End shop_details_text
