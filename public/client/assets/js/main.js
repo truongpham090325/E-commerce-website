@@ -435,3 +435,14 @@ if (shopDetailsText) {
   });
 }
 // End shop_details_text
+
+// mini-cart-quantity
+const miniCartQuantity = () => {
+  const cart = JSON.parse(localStorage.getItem("cart"));
+  const elementMiniCartQuantity = document.querySelector(
+    "[mini-cart-quantity]",
+  );
+  elementMiniCartQuantity.innerHTML = cart.length;
+};
+miniCartQuantity();
+// End mini-cart-quantity
