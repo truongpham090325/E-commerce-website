@@ -491,6 +491,73 @@ const eventRemoveItemInCart = () => {
 };
 // Hết Xóa item trong giỏ hàng
 
+// Cập nhập số lượng item trong giỏ hàng
+const eventQuantityInCart = () => {
+  const listBoxQuantity = document.querySelectorAll(
+    "[cart-table] .cart_page_quantity",
+  );
+  listBoxQuantity.forEach((box) => {
+    const inputQuantity = box.querySelector("input");
+    const buttonPlus = box.querySelector(".plus");
+    const buttonMinus = box.querySelector(".minus");
+
+    const item = box.closest("[cart-item]");
+    const productId = item.getAttribute("product-id");
+    let variant = item.getAttribute("variant");
+    if (variant) {
+      variant = JSON.parse(decodeURIComponent(variant));
+    }
+
+    const cart = JSON.parse(localStorage.getItem("cart"));
+    const itemUpdate = cart.find((cartItem) => {
+      const sameProduct = cartItem.productId == productId;
+      const variantItemInCart = cartItem.variant
+        ? JSON.stringify(cartItem.variant)
+        : "[]";
+      const variantItemRemove = variant ? JSON.stringify(variant) : "[]";
+      const sameVariant = variantItemInCart == variantItemRemove;
+      return sameProduct && sameVariant;
+    });
+
+    if (itemUpdate) {
+      // Nếu số lượng không đủ thì in ra thông báo
+      const quantity = parseInt(inputQuantity.value);
+      const max = parseInt(inputQuantity.max);
+      if (quantity > max) {
+        const itemAlert = document.createElement("div");
+        itemAlert.style.color = "red";
+        itemAlert.style.fontSize = "12px";
+        itemAlert.innerHTML = `Chỉ còn ${max} sản phẩm`;
+        box.appendChild(itemAlert);
+      }
+
+      // Tăng số lượng
+      buttonPlus.addEventListener("click", () => {
+        const quantity = parseInt(inputQuantity.value);
+        const max = parseInt(inputQuantity.max);
+        if (quantity < max) {
+          inputQuantity.value = quantity + 1;
+          itemUpdate.quantity = parseInt(inputQuantity.value);
+          localStorage.setItem("cart", JSON.stringify(cart));
+          drawCart();
+        }
+      });
+
+      // Giam số lượng
+      buttonMinus.addEventListener("click", () => {
+        const quantity = parseInt(inputQuantity.value);
+        if (quantity > 1) {
+          inputQuantity.value = quantity - 1;
+          itemUpdate.quantity = parseInt(inputQuantity.value);
+          localStorage.setItem("cart", JSON.stringify(cart));
+          drawCart();
+        }
+      });
+    }
+  });
+};
+// Hết Cập nhập số lượng item trong giỏ hàng
+
 // Vẽ giỏ hàng
 const drawCart = () => {
   const cart = JSON.parse(localStorage.getItem("cart"));
@@ -519,6 +586,7 @@ const drawCart = () => {
             const { detail } = item;
             let priceOld = 0;
             let priceNew = 0;
+            let stock = 0;
             let htmlVariant = "";
 
             if (item.variant) {
@@ -533,6 +601,7 @@ const drawCart = () => {
               });
               priceOld = variantMatched.priceOld;
               priceNew = variantMatched.priceNew;
+              stock = variantMatched.stock;
 
               detail.attributeList.forEach((attr) => {
                 const variant = item.variant.find((v) => v.attrId === attr._id);
@@ -545,6 +614,7 @@ const drawCart = () => {
             } else {
               priceOld = detail.priceOld;
               priceNew = detail.priceNew;
+              stock = detail.stock;
             }
 
             subTotal += priceNew * item.quantity;
@@ -609,7 +679,7 @@ const drawCart = () => {
                     <button class="minus">
                       <i class="fal fa-minus" aria-hidden="true"></i>
                     </button>
-                    <input value="${item.quantity}" type="number" readonly="" />
+                    <input value="${item.quantity}" type="number" min="1" max="${stock}" readonly />
                     <button class="plus">
                       <i class="fal fa-plus" aria-hidden="true"></i>
                     </button>
@@ -639,6 +709,8 @@ const drawCart = () => {
           elementSubTotal.innerHTML = subTotal.toLocaleString("vi-VN");
 
           eventRemoveItemInCart();
+
+          eventQuantityInCart();
         }
       });
   } else {
