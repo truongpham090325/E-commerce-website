@@ -512,8 +512,10 @@ const drawCart = () => {
           localStorage.setItem("cart", JSON.stringify(data.cart));
 
           let subTotal = 0;
+          let htmlMiniCart = "";
+          let htmlCartTable = "";
 
-          const htmlArrayMiniCart = data.cart.map((item) => {
+          data.cart.forEach((item) => {
             const { detail } = item;
             let priceOld = 0;
             let priceNew = 0;
@@ -547,7 +549,7 @@ const drawCart = () => {
 
             subTotal += priceNew * item.quantity;
 
-            return `
+            htmlMiniCart += `
               <li
                 cart-item
                 product-id=${item.productId}
@@ -574,10 +576,64 @@ const drawCart = () => {
                 </a>
               </li>
             `;
+
+            htmlCartTable += `
+            <tr
+                cart-item
+                product-id=${item.productId}
+                ${item.variant ? `variant="${encodeURIComponent(JSON.stringify(item.variant))}"` : ""}
+              >
+                <td class="cart_page_checkbox">
+                  <div class="form-check">
+                    <input class="form-check-input" value="" type="checkbox" />
+                  </div>
+                </td>
+                <td class="cart_page_img">
+                  <div class="img">
+                    <img class="img-fluid w-100" alt="${detail.name}" src="${domainCDN}${detail.images[0]}" />
+                  </div>
+                </td>
+                <td class="cart_page_details">
+                  <a class="title" href="/product/detail/${detail.slug}">${detail.name}</a>
+                  <p>
+                    ${priceNew.toLocaleString("vi-VN")}đ
+                    <del>${priceOld.toLocaleString("vi-VN")}đ</del>
+                  </p>
+                  ${htmlVariant}
+                </td>
+                <td class="cart_page_price">
+                  <h3>${priceNew.toLocaleString("vi-VN")}đ</h3>
+                </td>
+                <td class="cart_page_quantity">
+                  <div class="details_qty_input">
+                    <button class="minus">
+                      <i class="fal fa-minus" aria-hidden="true"></i>
+                    </button>
+                    <input value="${item.quantity}" type="number" readonly="" />
+                    <button class="plus">
+                      <i class="fal fa-plus" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </td>
+                <td class="cart_page_total">
+                  <h3>${(priceNew * item.quantity).toLocaleString("vi-VN")}đ</h3>
+                </td>
+                <td class="cart_page_action">
+                  <a href="javascript:;" button-remove-item>
+                    <i class="fal fa-times" aria-hidden="true"></i> Xóa
+                  </a>
+                </td>
+            </tr>
+            `;
           });
 
           const ulMiniCart = miniCart.querySelector(".offcanvas-body ul");
-          ulMiniCart.innerHTML = htmlArrayMiniCart.join("");
+          ulMiniCart.innerHTML = htmlMiniCart;
+
+          const cartTable = document.querySelector("[cart-table]");
+          if (cartTable) {
+            cartTable.innerHTML = htmlCartTable;
+          }
 
           const elementSubTotal = miniCart.querySelector("[sub-total]");
           elementSubTotal.innerHTML = subTotal.toLocaleString("vi-VN");
@@ -588,6 +644,17 @@ const drawCart = () => {
   } else {
     const ulMiniCart = miniCart.querySelector(".offcanvas-body ul");
     ulMiniCart.innerHTML = "Giỏ hàng trống.";
+
+    const cartTable = document.querySelector("[cart-table]");
+    if (cartTable) {
+      cartTable.innerHTML = `
+        <tr>
+          <td colspan="7" class="text-center">
+            Giỏ hàng trống.
+          </td>
+        </tr>
+      `;
+    }
 
     const elementSubTotal = miniCart.querySelector("[sub-total]");
     elementSubTotal.innerHTML = 0;

@@ -50,3 +50,9 @@ export const list = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const cart = (req: Request, res: Response) => {
+  res.render("client/pages/cart", {
+    pageTitle: "Giỏ hàng",
+  });
+};
