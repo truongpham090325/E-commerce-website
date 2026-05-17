@@ -1008,6 +1008,23 @@ const eventAddItemToCartInCompare = () => {
 };
 // Hết Nút thêm vào giỏ hàng ở trang So sánh
 
+// Nút xóa sản phẩm ở trang so sánh
+const eventRemoveItemInCompare = () => {
+  const listButtonRemove = document.querySelectorAll("[button-remove]");
+  listButtonRemove.forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = button.getAttribute("button-remove");
+      const compareList = JSON.parse(localStorage.getItem("compare"));
+      const dataItem = compareList[index];
+      compareList.splice(index, 1);
+      localStorage.setItem("compare", JSON.stringify(compareList));
+      drawNotify("success", "Đã xóa sản phẩm khỏi trang so sánh!");
+      window.location.reload();
+    });
+  });
+};
+// Hết Nút xóa sản phẩm ở trang so sánh
+
 // Vẽ trang so sánh sản phẩm
 const drawComparePage = () => {
   const comapreList = JSON.parse(localStorage.getItem("compare"));
@@ -1107,7 +1124,7 @@ const drawComparePage = () => {
                         '">Thêm vào giỏ</a>'
                       : '<a class="text-danger" href="#">Hết hàng</a>'
                   } 
-                  <a class="remove common_btn" href="#">
+                  <a class="remove common_btn" href="javascript:;" button-remove="${index}">
                     <i class="fal fa-trash" aria-hidden="true"></i>
                   </a>
                 </td>
@@ -1135,6 +1152,8 @@ const drawComparePage = () => {
           elementHtml5.outerHTML = html5;
 
           eventAddItemToCartInCompare();
+
+          eventRemoveItemInCompare();
         }
       });
   }
