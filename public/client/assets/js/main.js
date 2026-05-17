@@ -1256,6 +1256,75 @@ if (comparePage) {
 }
 // Hết Trang so sánh
 
+// Cập nhập số lượng item trong trang yêu thích
+const eventQuantityInWishlist = () => {
+  const listBoxQuantity = document.querySelectorAll(
+    "[wishlist-table] .cart_page_quantity",
+  );
+  listBoxQuantity.forEach((box) => {
+    const inputQuantity = box.querySelector("input");
+    const buttonPlus = box.querySelector(".plus");
+    const buttonMinus = box.querySelector(".minus");
+
+    const item = box.closest("[cart-item]");
+    const productId = item.getAttribute("product-id");
+    let variant = item.getAttribute("variant");
+    if (variant) {
+      variant = JSON.parse(decodeURIComponent(variant));
+    }
+
+    const wishlist = JSON.parse(localStorage.getItem("wishlist"));
+    const itemUpdate = wishlist.find((wishlistItem) => {
+      const sameProduct = wishlistItem.productId == productId;
+      const variantItemInWishlist = wishlistItem.variant
+        ? JSON.stringify(wishlistItem.variant)
+        : "[]";
+      const variantItemRemove = variant ? JSON.stringify(variant) : "[]";
+      const sameVariant = variantItemInWishlist == variantItemRemove;
+      return sameProduct && sameVariant;
+    });
+
+    if (itemUpdate) {
+      // Nếu số lượng không đủ thì in ra thông báo
+      const quantity = parseInt(inputQuantity.value);
+      const max = parseInt(inputQuantity.max);
+      if (quantity > max) {
+        const itemAlert = document.createElement("div");
+        itemAlert.style.color = "red";
+        itemAlert.style.fontSize = "12px";
+        itemAlert.innerHTML = `Chỉ còn ${max} sản phẩm`;
+        box.appendChild(itemAlert);
+      }
+
+      // Tăng số lượng
+      buttonPlus.addEventListener("click", () => {
+        const quantity = parseInt(inputQuantity.value);
+        const max = parseInt(inputQuantity.max);
+        if (quantity < max) {
+          inputQuantity.value = quantity + 1;
+          itemUpdate.quantity = parseInt(inputQuantity.value);
+          localStorage.setItem("wishlist", JSON.stringify(wishlist));
+          drawWishlistPage();
+        } else {
+          notyf.error("Chỉ còn " + max + " sản phẩm!");
+        }
+      });
+
+      // Giam số lượng
+      buttonMinus.addEventListener("click", () => {
+        const quantity = parseInt(inputQuantity.value);
+        if (quantity > 1) {
+          inputQuantity.value = quantity - 1;
+          itemUpdate.quantity = parseInt(inputQuantity.value);
+          localStorage.setItem("wishlist", JSON.stringify(wishlist));
+          drawWishlistPage();
+        }
+      });
+    }
+  });
+};
+// Hết Cập nhập số lượng item trong trang yêu thích
+
 // Vẽ danh sách yêu thích
 const drawWishlistPage = () => {
   const wishlist = JSON.parse(localStorage.getItem("wishlist"));
@@ -1365,6 +1434,8 @@ const drawWishlistPage = () => {
 
           const wishlistTable = document.querySelector("[wishlist-table]");
           wishlistTable.innerHTML = htmlWishlistTable;
+
+          eventQuantityInWishlist();
         }
       });
   }
