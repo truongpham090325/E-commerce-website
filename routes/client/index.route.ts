@@ -3,6 +3,7 @@ import homeRoutes from "./home.route";
 import blogRoutes from "./blog.route";
 import productRoutes from "./product.route";
 import cartRoutes from "./cart.route";
+import compareRoutes from "./compare.route";
 
 import * as categoryMiddleware from "../../middlewares/client/category.middleware";
 import * as attributeMiddleware from "../../middlewares/client/attribute.middleware";
@@ -16,5 +17,6 @@ router.use("/", homeRoutes);
 router.use("/blog", blogRoutes);
 router.use("/product", productRoutes);
 router.use("/cart", cartRoutes);
+router.use("/compare", compareRoutes);
 
 export default router;
