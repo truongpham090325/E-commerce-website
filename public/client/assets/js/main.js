@@ -1396,6 +1396,22 @@ const eventAddItemToCartInWishlist = () => {
 };
 // Hết Thêm sản phẩm vào trang giỏ hàng ở trang yêu thích
 
+// Xóa sản phẩm trên trang yêu thích
+const eventRemoveItemInWishlist = () => {
+  const listButtonRemove = document.querySelectorAll("[button-remove]");
+  listButtonRemove.forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = button.getAttribute("button-remove");
+      const wishlist = JSON.parse(localStorage.getItem("wishlist"));
+      wishlist.splice(index, 1);
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      drawNotify("success", "Đã xóa sản phẩm khỏi danh sách yêu thích!");
+      window.location.reload();
+    });
+  });
+};
+// Hết Xóa sản phẩm trên trang yêu thích
+
 // Vẽ danh sách yêu thích
 const drawWishlistPage = () => {
   const wishlist = JSON.parse(localStorage.getItem("wishlist"));
@@ -1508,6 +1524,7 @@ const drawWishlistPage = () => {
 
           eventQuantityInWishlist();
           eventAddItemToCartInWishlist();
+          eventRemoveItemInWishlist();
         }
       });
   }
