@@ -298,6 +298,26 @@ const miniCompareQuantity = () => {
 miniCompareQuantity();
 // End mini-compare-quantity
 
+// Khởi tạo mảng yêu thích sản phẩm
+const existWishlist = JSON.parse(localStorage.getItem("wishlist"));
+if (!existWishlist) {
+  localStorage.setItem("wishlist", JSON.stringify([]));
+}
+// Hết Khởi tạo mảng yêu thích sản phẩm
+
+// mini-wishlist-quantity
+const miniWishlistQuantity = () => {
+  const wishlist = JSON.parse(localStorage.getItem("wishlist"));
+  const listElementMiniWishlistQuantity = document.querySelectorAll(
+    "[mini-wishlist-quantity]",
+  );
+  listElementMiniWishlistQuantity.forEach((item) => {
+    item.innerHTML = wishlist.length;
+  });
+};
+miniCompareQuantity();
+// End mini-wishlist-quantity
+
 // shop_details_text
 const shopDetailsText = document.querySelector(".shop_details_text");
 if (shopDetailsText) {
@@ -310,6 +330,9 @@ if (shopDetailsText) {
   const buttonAddCart = shopDetailsText.querySelector("[button-add-cart]");
   const buttonAddCompare = shopDetailsText.querySelector(
     "[button-add-compare]",
+  );
+  const buttonAddWishList = shopDetailsText.querySelector(
+    "[button-add-wishlist]",
   );
 
   if (inputQuantity && !inputQuantity.value) {
@@ -523,6 +546,72 @@ if (shopDetailsText) {
       } else {
         notyf.error("Số lượng sản phẩm so sánh đã đủ!");
       }
+    }
+  });
+
+  /// Thêm vào yêu thích
+  buttonAddWishList.addEventListener("click", () => {
+    const productId = buttonAddCart.getAttribute("product-id");
+    const quantity = parseInt(inputQuantity.value);
+    if (productId && quantity > 0) {
+      const dataItem = {
+        productId: productId,
+        quantity: quantity,
+        checked: true,
+      };
+      const wishlist = JSON.parse(localStorage.getItem("wishlist"));
+
+      if (productVariants && productVariants.length > 0 && variantSelected) {
+        dataItem.variant = variantSelected.attributeValue;
+
+        // Tìm xem có sản phẩm trùng productId và trùng các attributeValue hay không
+        const existItem = wishlist.find((item) => {
+          if (item.productId !== dataItem.productId) {
+            return false;
+          }
+
+          // So sánh toàn bộ các thuộc tính trong variant
+          const oldAttrs = item.variant;
+          const newAttrs = dataItem.variant;
+
+          // Số lượng thuộc tính phải trùng
+          if (oldAttrs.length !== newAttrs.length) {
+            return false;
+          }
+
+          // Kiểm tra từng attrId và value
+          return oldAttrs.every((attr) => {
+            const match = newAttrs.find(
+              (a) => a.attrId === attr.attrId && a.value === attr.value,
+            );
+            return match ? true : false;
+          });
+        });
+
+        if (existItem) {
+          existItem.quantity = dataItem.quantity;
+          notyf.success("Đã cập nhật số lượng trong trang yêu thích!");
+        } else {
+          wishlist.unshift(dataItem);
+          notyf.success("Đã thêm vào trang yêu thích!");
+        }
+      } else {
+        // Tìm xem có sản phẩm trùng productId hay không
+        const existItem = cart.find(
+          (item) => item.productId === dataItem.productId,
+        );
+
+        if (existItem) {
+          existItem.quantity = dataItem.quantity;
+          notyf.success("Đã cập nhật số lượng trong trang yêu thích!");
+        } else {
+          cart.unshift(dataItem);
+          notyf.success("Đã thêm vào trang yêu thích!");
+        }
+      }
+
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      miniWishlistQuantity();
     }
   });
 }
