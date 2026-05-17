@@ -935,3 +935,141 @@ if (inputCartCheckAll) {
   });
 }
 // End Input Check All
+
+// Vẽ trang so sánh sản phẩm
+const drawComparePage = () => {
+  const comapreList = JSON.parse(localStorage.getItem("compare"));
+  if (comapreList.length > 0) {
+    fetch(`/compare/list`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(comapreList),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code == "error") {
+          localStorage.setItem("compare", JSON.stringify([]));
+        }
+
+        if (data.code == "success") {
+          localStorage.setItem("compare", JSON.stringify(data.compareList));
+
+          let html1 = "";
+          let html2 = "";
+          let html3 = "";
+          let html4 = "";
+          let html5 = "";
+
+          data.compareList.forEach((item) => {
+            const { detail } = item;
+            let priceOld = 0;
+            let priceNew = 0;
+            let stock = 0;
+            let htmlVariant = "";
+
+            if (item.variant) {
+              // Tìm đúng biến thể khớp trong danh sách
+              const variantMatched = detail.variants.find((variantItem) => {
+                return variantItem.attributeValue.every((attr) => {
+                  const selected = item.variant.find(
+                    (v) => v.attrId === attr.attrId,
+                  );
+                  return selected && selected.value === attr.value;
+                });
+              });
+              priceOld = variantMatched.priceOld;
+              priceNew = variantMatched.priceNew;
+              stock = variantMatched.stock;
+
+              detail.attributeList.forEach((attr) => {
+                const variant = item.variant.find((v) => v.attrId === attr._id);
+                htmlVariant += `
+                   <p>${attr.name}: ${variant.label}</p>
+                `;
+              });
+
+              html1 += `
+                <td>
+                  <img class="img-fluid w-100" alt=${detail.name} src="${domainCDN}${detail.images[0]}" />
+                  <a
+                    class="title"
+                    href="/product/detail/${detail.slug}"
+                    >${detail.name}
+                  </a
+                  >
+                </td>
+              `;
+
+              html2 += `
+                <td>
+                  <p>${detail.priceNew.toLocaleString("vi-VN")}đ<del style="margin-left: 4px; ">${detail.priceOld.toLocaleString("vi-VN")}đ</del></p>
+                </td>
+              `;
+
+              html3 += `
+                <td>
+                  ${htmlVariant}
+                </td>
+              `;
+
+              html4 += `
+                <td>
+                  <p class="rating">
+                    <i class="fas fa-star" aria-hidden="true"></i>
+                    <i class="fas fa-star" aria-hidden="true"></i>
+                    <i class="fas fa-star" aria-hidden="true"></i>
+                    <i class="fas fa-star" aria-hidden="true"></i>
+                    <i class="fas fa-star-half-alt" aria-hidden="true"></i>
+                  </p>
+                </td>
+              `;
+
+              html5 += `
+                <td>
+                  <a class="common_btn" href="#">Thêm vào giỏ</a>
+                  <a class="remove common_btn" href="#">
+                    <i class="fal fa-trash" aria-hidden="true"></i>
+                  </a>
+                </td>
+              `;
+            } else {
+              priceOld = detail.priceOld;
+              priceNew = detail.priceNew;
+              stock = detail.stock;
+            }
+          });
+
+          const elementHtml1 = document.querySelector("[html-1]");
+          elementHtml1.outerHTML = html1;
+
+          const elementHtml2 = document.querySelector("[html-2]");
+          elementHtml2.outerHTML = html2;
+
+          const elementHtml3 = document.querySelector("[html-3]");
+          elementHtml3.outerHTML = html3;
+
+          const elementHtml4 = document.querySelector("[html-4]");
+          elementHtml4.outerHTML = html4;
+
+          const elementHtml5 = document.querySelector("[html-5]");
+          elementHtml5.outerHTML = html5;
+
+          eventRemoveItemInCart();
+
+          eventCheckItemInCart();
+
+          eventQuantityInCart();
+        }
+      });
+  }
+};
+// Hết trang so sánh sản phẩm
+
+// Trang so sánh
+const comparePage = document.querySelector(".compare_page");
+if (comparePage) {
+  drawComparePage();
+}
+// Hết Trang so sánh
