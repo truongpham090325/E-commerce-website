@@ -519,6 +519,7 @@ if (shopDetailsText) {
         }
 
         localStorage.setItem("compare", JSON.stringify(compareList));
+        miniCompareQuantity();
       } else {
         notyf.error("Số lượng sản phẩm so sánh đã đủ!");
       }
@@ -936,6 +937,77 @@ if (inputCartCheckAll) {
 }
 // End Input Check All
 
+// Nút thêm vào giỏ hàng ở trang So sánh
+const eventAddItemToCartInCompare = () => {
+  const listButtonAdd = document.querySelectorAll("[button-add]");
+  listButtonAdd.forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = button.getAttribute("button-add");
+      const compareList = JSON.parse(localStorage.getItem("compare"));
+      const compareItem = compareList[index];
+      const dataItem = {
+        productId: compareItem.productId,
+        quantity: 1,
+        checked: true,
+      };
+
+      const cart = JSON.parse(localStorage.getItem("cart"));
+
+      if (compareItem.variant) {
+        dataItem.variant = compareItem.variant;
+
+        // Tìm xem có sản phẩm trùng productId và trùng các attributeValue hay không
+        const existItem = cart.find((item) => {
+          if (item.productId !== dataItem.productId) {
+            return false;
+          }
+
+          // So sánh toàn bộ các thuộc tính trong variant
+          const oldAttrs = item.variant;
+          const newAttrs = dataItem.variant;
+
+          // Số lượng thuộc tính phải trùng
+          if (oldAttrs.length !== newAttrs.length) {
+            return false;
+          }
+
+          // Kiểm tra từng attrId và value
+          return oldAttrs.every((attr) => {
+            const match = newAttrs.find(
+              (a) => a.attrId === attr.attrId && a.value === attr.value,
+            );
+            return match ? true : false;
+          });
+        });
+
+        if (existItem) {
+          notyf.success("Sản phẩm đã có trong giỏ hàng!");
+        } else {
+          cart.unshift(dataItem);
+          notyf.success("Đã thêm vào giỏ hàng!");
+        }
+      } else {
+        // Tìm xem có sản phẩm trùng productId hay không
+        const existItem = cart.find(
+          (item) => item.productId === dataItem.productId,
+        );
+
+        if (existItem) {
+          notyf.success("Sản phẩm đã có trong giỏ hàng!");
+        } else {
+          cart.unshift(dataItem);
+          notyf.success("Đã thêm vào giỏ hàng!");
+        }
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      miniCartQuantity();
+      drawCart();
+    });
+  });
+};
+// Hết Nút thêm vào giỏ hàng ở trang So sánh
+
 // Vẽ trang so sánh sản phẩm
 const drawComparePage = () => {
   const comapreList = JSON.parse(localStorage.getItem("compare"));
@@ -962,7 +1034,7 @@ const drawComparePage = () => {
           let html4 = "";
           let html5 = "";
 
-          data.compareList.forEach((item) => {
+          data.compareList.forEach((item, index) => {
             const { detail } = item;
             let priceOld = 0;
             let priceNew = 0;
@@ -1028,7 +1100,13 @@ const drawComparePage = () => {
 
               html5 += `
                 <td>
-                  <a class="common_btn" href="#">Thêm vào giỏ</a>
+                  ${
+                    stock > 0
+                      ? '<a class="common_btn" href="javascript:;" button-add="' +
+                        index +
+                        '">Thêm vào giỏ</a>'
+                      : '<a class="text-danger" href="#">Hết hàng</a>'
+                  } 
                   <a class="remove common_btn" href="#">
                     <i class="fal fa-trash" aria-hidden="true"></i>
                   </a>
@@ -1056,11 +1134,7 @@ const drawComparePage = () => {
           const elementHtml5 = document.querySelector("[html-5]");
           elementHtml5.outerHTML = html5;
 
-          eventRemoveItemInCart();
-
-          eventCheckItemInCart();
-
-          eventQuantityInCart();
+          eventAddItemToCartInCompare();
         }
       });
   }
