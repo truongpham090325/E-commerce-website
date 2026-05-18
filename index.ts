@@ -6,6 +6,9 @@ import adminRoutes from "./routes/admin/index.route";
 import clientRoutes from "./routes/client/index.route";
 import { domainCDN, pathAdmin } from "./configs/variable.config";
 import cookieParser from "cookie-parser";
+import session = require("express-session");
+import { configureGooglePassport } from "./configs/googleOauth.config";
+import passport = require("passport");
 
 // Load biến môi trường
 dotenv.config();
@@ -21,6 +24,20 @@ app.use(express.json());
 
 // Thư viện cho phép lấy cookie
 app.use(cookieParser());
+
+// Cấu hình session
+app.use(
+  session({
+    secret: `${process.env.SESSION_SECRET}`,
+    resave: false,
+    saveUninitialized: true,
+  }),
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+configureGooglePassport(passport);
 
 // Thiết lập thư mục views và view engine Pug
 app.set("views", path.join(__dirname, "views")); // Thư mục chứa file Pug

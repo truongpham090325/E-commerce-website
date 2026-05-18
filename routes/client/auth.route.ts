@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as authController from "../../controllers/client/auth.controller";
 import * as authValidate from "../../validations/client/auth.middleware";
+import passport from "passport";
 
 const router = Router();
 
@@ -17,5 +18,22 @@ router.get("/login", authController.login);
 router.post("/login", authValidate.loginPost, authController.loginPost);
 
 router.get("/logout", authController.logout);
+
+router.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  }),
+);
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/auth/login",
+  }),
+  (req, res) => {
+    res.redirect("/");
+  },
+);
 
 export default router;
