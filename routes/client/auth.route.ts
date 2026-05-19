@@ -31,9 +31,7 @@ router.get(
   passport.authenticate("google", {
     failureRedirect: "/auth/login",
   }),
-  (req, res) => {
-    res.redirect("/");
-  },
+  authController.callbackGoogle,
 );
 
 export default router;
