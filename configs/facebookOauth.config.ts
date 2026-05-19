@@ -20,12 +20,28 @@ export const configureFacebookPassport = (
       async (accessToken, refreshToken, profile, done) => {
         try {
           // Lấy email an toàn (tránh lỗi undefined khi Facebook không trả về email)
-          const email = profile.emails && profile.emails.length > 0 ? profile.emails[0].value : "";
+          const email =
+            profile.emails && profile.emails.length > 0
+              ? profile.emails[0].value
+              : "";
 
           // 1. Tìm user theo facebookId trước
-          let existingUser = await AccountUser.findOne({ facebookId: profile.id });
+          let existingUser = await AccountUser.findOne({
+            facebookId: profile.id,
+          });
           if (existingUser) {
             return done(null, existingUser);
+          }
+
+          // 2. Nếu chưa có facebookId, tìm theo email (nếu có)
+          if (email) {
+            existingUser = await AccountUser.findOne({ email: email });
+            if (existingUser) {
+              // Cập nhật thêm facebookId vào user đã có email này
+              existingUser.facebookId = profile.id;
+              await existingUser.save();
+              return done(null, existingUser);
+            }
           }
 
           // 3. Nếu chưa có thì tạo user mới

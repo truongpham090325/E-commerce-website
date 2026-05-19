@@ -19,6 +19,7 @@ export const configureGooglePassport = function (
           const email = (profile.emails as any)?.[0]?.value;
 
           const existingUser = await AccountUser.findOne({
+            email: email,
             googleId: profile.id,
           });
           if (existingUser) {

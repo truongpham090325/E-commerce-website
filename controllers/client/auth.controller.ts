@@ -14,8 +14,6 @@ export const registerPost = async (req: Request, res: Response) => {
   try {
     const existEmail = await AccountUser.findOne({
       email: req.body.email,
-      googleId: "",
-      facebookId: "",
     });
 
     if (existEmail) {
@@ -28,8 +26,6 @@ export const registerPost = async (req: Request, res: Response) => {
 
     const existPhone = await AccountUser.findOne({
       phone: req.body.phone,
-      googleId: "",
-      facebookId: "",
     });
 
     if (existPhone) {
@@ -98,8 +94,6 @@ export const loginPost = async (req: Request, res: Response) => {
 
     const existAccount = await AccountUser.findOne({
       email: email,
-      googleId: "",
-      facebookId: "",
     });
 
     if (!existAccount) {
