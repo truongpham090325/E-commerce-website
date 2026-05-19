@@ -16,7 +16,6 @@ export const configureGooglePassport = function (
       // Hàm khi google xác thực thành công
       async (accessToken, refreshToken, profile, done) => {
         try {
-          console.log(profile);
           const email = (profile.emails as any)?.[0]?.value;
 
           const existingUser = await AccountUser.findOne({

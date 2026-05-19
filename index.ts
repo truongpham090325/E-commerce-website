@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import session = require("express-session");
 import { configureGooglePassport } from "./configs/googleOauth.config";
 import passport = require("passport");
+import { configureFacebookPassport } from "./configs/facebookOauth.config";
 
 // Load biến môi trường
 dotenv.config();
@@ -38,6 +39,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 configureGooglePassport(passport);
+configureFacebookPassport(passport);
 
 // Thiết lập thư mục views và view engine Pug
 app.set("views", path.join(__dirname, "views")); // Thư mục chứa file Pug
