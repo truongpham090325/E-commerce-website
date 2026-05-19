@@ -28,17 +28,6 @@ export const configureFacebookPassport = (
             return done(null, existingUser);
           }
 
-          // 2. Nếu chưa có facebookId, tìm theo email (nếu có)
-          if (email) {
-            existingUser = await AccountUser.findOne({ email: email });
-            if (existingUser) {
-              // Cập nhật thêm facebookId vào user đã có email này
-              existingUser.facebookId = profile.id;
-              await existingUser.save();
-              return done(null, existingUser);
-            }
-          }
-
           // 3. Nếu chưa có thì tạo user mới
           const fullName = profile.displayName || "Người dùng Facebook";
           const search = slugify(`${fullName} ${email}`, {
