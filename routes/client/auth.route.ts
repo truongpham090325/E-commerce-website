@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as authController from "../../controllers/client/auth.controller";
 import * as authValidate from "../../validations/client/auth.middleware";
+import * as authMiddleware from "../../middlewares/client/auth.middleware";
 import passport from "passport";
 
 const router = Router();
@@ -63,6 +64,15 @@ router.post(
   "/otp-password",
   authValidate.otpPasswordPost,
   authController.otpPasswordPost,
+);
+
+router.get("/reset-password", authController.resetPassword);
+
+router.post(
+  "/reset-password",
+  authMiddleware.verifyToken,
+  authValidate.resetPasswordPost,
+  authController.resetPasswordPost,
 );
 
 export default router;
