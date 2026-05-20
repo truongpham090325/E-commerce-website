@@ -1957,3 +1957,84 @@ if (dashboardProfileEditForm) {
     });
 }
 // End Dashboard Profile Edit Form
+
+// changePasswordForm
+const changePasswordForm = document.querySelector("#changePasswordForm");
+if (changePasswordForm) {
+  const validation = new JustValidate("#changePasswordForm");
+
+  validation
+    .addField("#password", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập mật khẩu mới!",
+      },
+      {
+        rule: "minLength",
+        value: 8,
+        errorMessage: "Mật khẩu phải có ít nhất 8 ký tự!",
+      },
+      {
+        rule: "customRegexp",
+        value: /[A-Z]/,
+        errorMessage: "Mật khẩu phải có ít nhất một chữ cái viết hoa!",
+      },
+      {
+        rule: "customRegexp",
+        value: /[a-z]/,
+        errorMessage: "Mật khẩu phải có ít nhất một chữ cái viết thường!",
+      },
+      {
+        rule: "customRegexp",
+        value: /\d/,
+        errorMessage: "Mật khẩu phải có ít nhất một chữ số!",
+      },
+      {
+        rule: "customRegexp",
+        value: /[~!@#$%^&*]/,
+        errorMessage:
+          "Mật khẩu phải có ít nhất một ký tự đặc biệt! (~!@#$%^&*)",
+      },
+    ])
+    .addField("#confirmPassword", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng xác nhận mật khẩu!",
+      },
+      {
+        validator: (value, fields) => {
+          const password = fields["#password"].elem.value;
+          return value == password;
+        },
+        errorMessage: "Mật khẩu xác nhận không khớp!",
+      },
+    ])
+    .onSuccess((event) => {
+      const password = event.target.password.value;
+
+      const dataFinal = {
+        password: password,
+      };
+
+      fetch(`/dashboard/change-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(dataFinal),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if (data.code == "success") {
+            drawNotify(data.code, data.message);
+            window.location.reload();
+          }
+        });
+    });
+}
+// End changePasswordForm

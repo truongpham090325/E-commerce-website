@@ -14,4 +14,12 @@ router.patch(
   dashboardController.profileEditPatch,
 );
 
+router.get("/change-password", dashboardController.changePassword);
+
+router.post(
+  "/change-password",
+  dashboardValidate.changePasswordPost,
+  dashboardController.changePasswordPost,
+);
+
 export default router;

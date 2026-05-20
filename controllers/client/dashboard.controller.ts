@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import AccountUser from "../../models/account-user.model";
 import slugify from "slugify";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 export const profile = (req: Request, res: Response) => {
   res.render("client/pages/dashboard-profile", {
@@ -83,6 +84,41 @@ export const profileEditPatch = async (req: Request, res: Response) => {
     res.json({
       code: "error",
       message: "Dữ liệu không hợp lệ! ",
+    });
+  }
+};
+
+export const changePassword = (req: Request, res: Response) => {
+  res.render("client/pages/dashboard-change-password", {
+    pageTitle: "Đổi mật khẩu",
+  });
+};
+
+export const changePasswordPost = async (req: Request, res: Response) => {
+  try {
+    const { password } = req.body;
+    const userId = res.locals.accountUser.id;
+
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    await AccountUser.updateOne(
+      {
+        _id: userId,
+      },
+      {
+        password: hashPassword,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Đã đổi mật khẩu thành công!",
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
     });
   }
 };
