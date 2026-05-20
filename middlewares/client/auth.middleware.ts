@@ -34,3 +34,24 @@ export const verifyToken = async (
 
   next();
 };
+
+export const loggedIn = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (!res.locals.accountUser) {
+    if (req.method == "GET") {
+      res.redirect("/auth/login");
+      return;
+    } else {
+      res.json({
+        code: "error",
+        message: "Vui lòng đăng nhập!",
+      });
+      return;
+    }
+  }
+
+  next();
+};
