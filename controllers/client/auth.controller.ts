@@ -1,8 +1,11 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import AccountUser from "../../models/account-user.model";
 import bcrypt from "bcryptjs";
 import slugify from "slugify";
 import jwt from "jsonwebtoken";
+import { generateRandomNumber } from "../../helpers/generate.helper";
+import VerifyOTP from "../../models/verify-otp.model";
+import { sendMail } from "../../helpers/mail.helper";
 
 export const register = (req: Request, res: Response) => {
   res.render("client/pages/register", {
@@ -205,4 +208,72 @@ export const callbackFacebook = async (req: Request, res: Response) => {
   });
 
   res.redirect("/");
+};
+
+export const forgotPassword = (req: Request, res: Response) => {
+  res.render("client/pages/forgot-password", {
+    pageTitle: "Quên mật khẩu",
+  });
+};
+
+export const forgotPasswordPost = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    const existAccount = await AccountUser.findOne({
+      email: email,
+      deleted: false,
+      status: "active",
+    });
+
+    if (!existAccount) {
+      res.json({
+        code: "error",
+        message: "Tài khoản không tồn tại!",
+      });
+      return;
+    }
+
+    // Tạo mã OTP
+    const otp = generateRandomNumber(4);
+
+    const existverifyOTP = await VerifyOTP.findOne({
+      email: email,
+      type: "otp-password",
+    });
+
+    if (existverifyOTP) {
+      res.json({
+        code: "error",
+        message: "Vui lòng gửi lại yêu cầu sau 5 phút!",
+      });
+      return;
+    }
+
+    const newRecord = new VerifyOTP({
+      email: email,
+      otp: otp,
+      type: "otp-password",
+      expireAt: Date.now() + 5 * 60 * 1000, // 5 phút
+    });
+
+    await newRecord.save();
+
+    // Gửi mail tự động
+    const title = `Mã OTP lấy lại mật khẩu`;
+    const content = `Mã OTP của bạn là ${otp}. Mã OTP này sẽ hết hạn sau 5 phút. Vui lòng không chia sẻ mã OTP cho bất kỳ ai.`;
+    sendMail(email, title, content);
+
+    res.json({
+      code: "success",
+      message:
+        "Chúng tôi đã gửi mã OTP qua email. Vui lòng kiểm tra email của bạn!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
 };

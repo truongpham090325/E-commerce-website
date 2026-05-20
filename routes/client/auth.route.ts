@@ -49,4 +49,12 @@ router.get(
   authController.callbackFacebook,
 );
 
+router.get("/forgot-password", authController.forgotPassword);
+
+router.post(
+  "/forgot-password",
+  authValidate.forgotPasswordPost,
+  authController.forgotPasswordPost,
+);
+
 export default router;
