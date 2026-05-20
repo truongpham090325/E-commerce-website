@@ -2129,7 +2129,7 @@ if (listButtonApi.length > 0) {
           text: "Hành động không thể khôi phục!",
           icon: "warning",
           showCancelButton: true,
-          confirmButtonColor: "yellow",
+          confirmButtonColor: "green",
           cancelButtonColor: "red",
           confirmButtonText: "Đồng ý!",
           cancelButtonText: "Hủy bỏ",

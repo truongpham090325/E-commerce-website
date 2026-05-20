@@ -216,3 +216,23 @@ export const addressChangeDefault = async (req: Request, res: Response) => {
     res.redirect("/dashboard/address");
   }
 };
+
+export const addressDelete = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const userId = res.locals.accountUser.id;
+
+    await UserAddress.deleteOne({
+      _id: id,
+      userId: userId,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa địa chỉ!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect("/dashboard/address");
+  }
+};
