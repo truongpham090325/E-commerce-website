@@ -57,4 +57,12 @@ router.post(
   authController.forgotPasswordPost,
 );
 
+router.get("/otp-password", authController.otpPassword);
+
+router.post(
+  "/otp-password",
+  authValidate.otpPasswordPost,
+  authController.otpPasswordPost,
+);
+
 export default router;
