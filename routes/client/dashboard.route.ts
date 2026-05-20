@@ -24,4 +24,8 @@ router.post(
 
 router.get("/address", dashboardController.address);
 
+router.get("/address/create", dashboardController.addressCreate);
+
+router.post("/address/create", dashboardController.addressCreatePost);
+
 export default router;
