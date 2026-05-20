@@ -22,4 +22,6 @@ router.post(
   dashboardController.changePasswordPost,
 );
 
+router.get("/address", dashboardController.address);
+
 export default router;

@@ -122,3 +122,9 @@ export const changePasswordPost = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const address = (req: Request, res: Response) => {
+  res.render("client/pages/dashboard-address", {
+    pageTitle: "Danh sách địa chỉ",
+  });
+};

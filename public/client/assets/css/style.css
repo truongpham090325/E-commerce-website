@@ -9964,6 +9964,19 @@ footer {
   top: 2px;
 }
 
+.checkout_single_address {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkout_single_address .inner-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 16px;
+}
+
 .checkout_form_area .accordion-button {
   background: none;
   padding: 0;
