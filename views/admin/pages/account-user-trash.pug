@@ -1,6 +1,4 @@
 extends ../layouts/default.pug
-include ../mixins/pagination.pug
-include ../mixins/form-search.pug
 
 block main
   .row
@@ -12,18 +10,15 @@ block main
               h4.card-title #{pageTitle}
             // end col
             .col-auto
-              a.btn.btn-danger.me-1(
-                href=`/${pathAdmin}/account-user/trash`
+              a.btn.btn-info(
+                href=`/${pathAdmin}/account-user/list`
                 )
-                i.fa-solid.fa-trash.me-1
-                | Thùng rác
+                i.fas.fa-arrow-left.me-1
+                | Quay lại danh sách
             // end col
           // end row
         // end card-header
         .card-body.pt-0
-          .row
-            .col-lg-6
-              +form-search()
           .table-responsive
             table.table.table-striped.mb-0
               thead.table-light
@@ -39,7 +34,7 @@ block main
               tbody
                 each item, index in accountUserList
                   tr
-                    td #{pagination.skip + index + 1}
+                    td #{index + 1}
                     td
                       img(
                         src=`${domainCDN}${item.avatar}`
@@ -65,8 +60,14 @@ block main
                         href="javascript:;"
                         button-api
                         data-method="PATCH"
-                        data-api=`/${pathAdmin}/account-user/delete/${item.id}`
-                      )
-                        i.las.la-trash-alt.text-secondary.fs-20
-          +pagination()
+                        data-api=`/${pathAdmin}/account-user/undo/${item.id}`
+                        )
+                        i.fas.fa-undo-alt.text-secondary.font-16.fs-20
+                      a(
+                        href="javascript:;"
+                        button-api
+                        data-method="DELETE"
+                        data-api=`/${pathAdmin}/account-user/destroy/${item.id}`
+                        )
+                        i.las.la-trash-alt.text-secondary.font-16.fs-20
     // end col
