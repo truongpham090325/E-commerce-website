@@ -148,6 +148,7 @@ export const addressCreate = (req: Request, res: Response) => {
 export const addressCreatePost = async (req: Request, res: Response) => {
   try {
     const id = res.locals.accountUser.id;
+    console.log(req.body);
 
     req.body.userId = id;
 
