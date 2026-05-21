@@ -145,6 +145,24 @@
             // end sidebarAccountAdmin
           li.nav-item
             a.nav-link(
+              aria-controls="sidebarAccountUser" 
+              aria-expanded="false" 
+              role="button" 
+              data-bs-toggle="collapse" 
+              href="#sidebarAccountUser"
+              )
+              i.iconoir-user-circle.menu-icon
+              span Tài khoản người dùng
+            #sidebarAccountUser.collapse
+              ul.nav.flex-column
+                li.nav-item
+                  a.nav-link(
+                    href=`/${pathAdmin}/account-user/list`
+                    ) Danh sách tài khoản
+              // end nav
+            // end sidebarAccountAdmin
+          li.nav-item
+            a.nav-link(
               href=`/${pathAdmin}/admin-log/list`
               )
               i.iconoir-clock.menu-icon
