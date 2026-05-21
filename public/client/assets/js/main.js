@@ -2401,3 +2401,31 @@ if (dashboardAddressEditForm) {
     });
 }
 // End Dashboard Address Edit Form
+
+// Profile photo
+const profilePhoto = document.querySelector("#profile_photo");
+if (profilePhoto) {
+  profilePhoto.addEventListener("change", (event) => {
+    const avatar = event.target.files[0];
+    if (avatar) {
+      const formData = new FormData();
+      formData.append("avatar", avatar);
+
+      fetch("/dashboard/profile/photo", {
+        method: "PATCH",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if (data.code == "success") {
+            notyf.success(data.message);
+          }
+        });
+    }
+  });
+}
+// End Profile photo

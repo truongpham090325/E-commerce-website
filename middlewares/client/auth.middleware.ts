@@ -28,6 +28,7 @@ export const verifyToken = async (
         email: existAccount.email,
         fullName: existAccount.fullName,
         phone: existAccount.phone,
+        avatar: existAccount.avatar,
       };
     }
   }

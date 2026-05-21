@@ -3,7 +3,9 @@ div(class="dashboard_sidebar")
     div(class="dashboard_sidebar_user")
       .img
         img.img-fluid.w-100(
-          src="/client/assets/images/dashboard_user_img.jpg"
+          src=(
+            accountUser.avatar ? `${domainCDN}${accountUser.avatar}` : "/client/assets/images/dashboard_user_img.jpg"
+          )
           )
         label(for="profile_photo")
           i.far.fa-camera

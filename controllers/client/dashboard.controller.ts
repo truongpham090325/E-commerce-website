@@ -4,6 +4,9 @@ import slugify from "slugify";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import UserAddress from "../../models/user-address.model";
+import FormData from "form-data";
+import axios from "axios";
+import { domainCDN } from "../../configs/variable.config";
 
 export const profile = (req: Request, res: Response) => {
   res.render("client/pages/dashboard-profile", {
@@ -301,6 +304,90 @@ export const addressEditPatch = async (req: Request, res: Response) => {
       code: "success",
       message: "Đã cập nhập lại địa chỉ!",
     });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
+};
+
+export const profilePhotoPatch = async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.accountUser.id;
+    const file = req.file;
+
+    if (!file) {
+      res.json({
+        code: "error",
+        message: "Vui lòng gửi kèm file!",
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("files", file.buffer, {
+      filename: file.originalname,
+      contentType: file.mimetype,
+    });
+    formData.append("folderPath", `users/${userId}`);
+
+    const response = await axios.post(
+      `${domainCDN}/file-manager/upload`,
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+          Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`,
+        }, // cần thiết để gửi đúng multipart/form-data
+      },
+    );
+
+    if (response.data.code == "success") {
+      const avatar = response.data.saveLinks[0];
+      const linkAvatar = `${avatar.folder}/${avatar.fileName}`;
+
+      await AccountUser.updateOne(
+        {
+          _id: userId,
+        },
+        {
+          avatar: linkAvatar,
+        },
+      );
+
+      res.json({
+        code: "success",
+        message: "Đã cập nhập ảnh đại diện!",
+        linkAvatar: linkAvatar,
+      });
+
+      // Xóa ảnh cũ
+      if (res.locals.accountUser.avatar) {
+        const avatarOld = res.locals.accountUser.avatar;
+        const lastSlashIndex = avatarOld.lastIndexOf("/");
+        const folder = avatarOld.substring(0, lastSlashIndex);
+        const fileName = avatarOld.substring(lastSlashIndex + 1);
+        const formDataDelete = new FormData();
+        formDataDelete.append("folder", folder);
+        formDataDelete.append("fileName", fileName);
+
+        axios.patch(`${domainCDN}/file-manager/delete-file`, formDataDelete, {
+          headers: {
+            ...formDataDelete.getHeaders(),
+            Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`,
+          }, // cần thiết để gửi đúng multipart/form-data
+        });
+      }
+
+      return;
+    } else {
+      res.json({
+        code: "error",
+        message: "Lỗi upload!",
+      });
+    }
   } catch (error) {
     console.log(error);
     res.json({
