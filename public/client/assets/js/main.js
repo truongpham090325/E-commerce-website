@@ -776,16 +776,37 @@ const eventQuantityInCart = () => {
 };
 // Hết Cập nhập số lượng item trong giỏ hàng
 
+// Lấy thông tin địa chỉ đã chọn
+const getUserAddress = () => {
+  let userAddress = null;
+  const inputUserAddressChecked = document.querySelector(
+    `input[name="userAddress"]:checked`,
+  );
+  if (inputUserAddressChecked) {
+    const dataInfo = inputUserAddressChecked.getAttribute("data-info");
+    if (dataInfo) {
+      userAddress = JSON.parse(dataInfo);
+    }
+  }
+  return userAddress;
+};
+// Hết Lấy thông tin địa chỉ đã chọn
+
 // Vẽ giỏ hàng
 const drawCart = () => {
   const cart = JSON.parse(localStorage.getItem("cart"));
+  const userAddress = getUserAddress();
+
   if (cart.length > 0) {
     fetch(`/cart/list`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(cart),
+      body: JSON.stringify({
+        cart: cart,
+        userAddress: userAddress,
+      }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -800,6 +821,7 @@ const drawCart = () => {
           let htmlMiniCart = "";
           let htmlCartTable = "";
           let htmlCartSummary = "";
+          let htmlShipping = "";
 
           data.cart.forEach((item) => {
             const { detail } = item;
@@ -940,6 +962,31 @@ const drawCart = () => {
             }
           });
 
+          // Hiển thị hãng vận chuyển
+          if (data.shippingOptions) {
+            data.shippingOptions.forEach((item, index) => {
+              htmlShipping += `
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    id="shippingMethod${index}" 
+                    name="shippingMethod" 
+                    type="radio"
+                    value="${item.id}"
+                  >
+                  <label class="form-check-label" for="shippingMethod${index}">
+                    <small>${item.carrier_name} (${item.service} - ${item.expected}):</small>
+                    <span>
+                      <span>(+) </span>
+                      <span>${item.total_fee.toLocaleString("vi-VN")}đ</span>
+                    </span>
+                  </label>
+                </div>
+              `;
+            });
+          }
+          // Hết Hiển thị hãng vận chuyển
+
           let discount = 0;
           let couponDetail = sessionStorage.getItem("couponDetail");
           if (couponDetail) {
@@ -1004,6 +1051,11 @@ const drawCart = () => {
           const elementTotal = document.querySelector("[total]");
           if (elementTotal) {
             elementTotal.innerHTML = total.toLocaleString("vi-VN");
+          }
+
+          const elementShippingList = document.querySelector("[shipping-list]");
+          if (elementShippingList) {
+            elementShippingList.innerHTML = htmlShipping;
           }
 
           eventRemoveItemInCart();
