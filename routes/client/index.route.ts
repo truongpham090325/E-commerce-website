@@ -8,6 +8,7 @@ import wishlistRoutes from "./wishlist.route";
 import authRoutes from "./auth.route";
 import dashboardRoutes from "./dashboard.route";
 import coutponRoutes from "./coupon.route";
+import checkoutRoutes from "./checkout.route";
 
 import * as categoryMiddleware from "../../middlewares/client/category.middleware";
 import * as attributeMiddleware from "../../middlewares/client/attribute.middleware";
@@ -28,5 +29,6 @@ router.use("/wishlist", wishlistRoutes);
 router.use("/auth", authRoutes);
 router.use("/dashboard", authMiddleware.loggedIn, dashboardRoutes);
 router.use("/coupon", coutponRoutes);
+router.use("/checkout", checkoutRoutes);
 
 export default router;
