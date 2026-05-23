@@ -787,10 +787,36 @@ const getUserAddress = () => {
     if (dataInfo) {
       userAddress = JSON.parse(dataInfo);
     }
+  } else {
+    const inputLongitude = document.querySelector("input[name='longitude']");
+    const inputLatitude = document.querySelector("input[name='latitude']");
+    if (inputLongitude && inputLatitude) {
+      const longitude = inputLongitude.value;
+      const latitude = inputLatitude.value;
+      if (longitude && latitude) {
+        userAddress = {
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
+        };
+      }
+    }
   }
   return userAddress;
 };
 // Hết Lấy thông tin địa chỉ đã chọn
+
+// Lựa chọn hãng vận chuyển
+const eventCheckShipping = () => {
+  const listInputShipping = document.querySelectorAll(
+    "[shipping-list] input[name='shippingMethod']",
+  );
+  listInputShipping.forEach((input) => {
+    input.addEventListener("change", () => {
+      drawCart();
+    });
+  });
+};
+// Hết Lựa chọn hãng vận chuyển
 
 // Vẽ giỏ hàng
 const drawCart = () => {
@@ -818,6 +844,8 @@ const drawCart = () => {
           localStorage.setItem("cart", JSON.stringify(data.cart));
 
           let subTotal = 0;
+          let shippingFree = 0;
+
           let htmlMiniCart = "";
           let htmlCartTable = "";
           let htmlCartSummary = "";
@@ -964,10 +992,22 @@ const drawCart = () => {
 
           // Hiển thị hãng vận chuyển
           if (data.shippingOptions) {
+            const inputChecked = document.querySelector(
+              `[shipping-list] [name="shippingMethod"]:checked`,
+            );
+            let idInputChecked = null;
+            if (inputChecked) {
+              idInputChecked = inputChecked.id;
+            }
+
             data.shippingOptions.forEach((item, index) => {
+              const checked =
+                idInputChecked == `shippingMethod${index}` ? "checked" : "";
+
               htmlShipping += `
                 <div class="form-check">
-                  <input 
+                  <input
+                    ${checked} 
                     class="form-check-input" 
                     id="shippingMethod${index}" 
                     name="shippingMethod" 
@@ -983,6 +1023,10 @@ const drawCart = () => {
                   </label>
                 </div>
               `;
+
+              if (checked == "checked") {
+                shippingFree = item.total_fee;
+              }
             });
           }
           // Hết Hiển thị hãng vận chuyển
@@ -1023,7 +1067,7 @@ const drawCart = () => {
               sessionStorage.removeItem("couponDetail");
             }
           }
-          let total = subTotal - discount;
+          let total = subTotal + shippingFree - discount;
 
           const ulMiniCart = miniCart.querySelector(".offcanvas-body ul");
           ulMiniCart.innerHTML = htmlMiniCart;
@@ -1063,6 +1107,8 @@ const drawCart = () => {
           eventCheckItemInCart();
 
           eventQuantityInCart();
+
+          eventCheckShipping();
         }
       });
   } else {
@@ -2390,6 +2436,9 @@ if (boxMap) {
 
           const inputLat = document.querySelector(`[name="latitude"]`);
           inputLat.value = lat;
+
+          // Cập nhập lại giỏ hàng
+          drawCart();
         } else {
           notyf.error("Không tìm thấy địa chỉ!");
         }
@@ -2608,6 +2657,9 @@ if (checkoutPage) {
         collapse.hide();
       }
       map.updateSize();
+
+      // Cập nhập lại giỏ hàng
+      drawCart();
     });
   });
 }
@@ -2669,12 +2721,23 @@ if (buttonOrder) {
     );
     const dataPaymentMethod = inputPaymentMethodChecked.value;
 
+    // Hãng vận chuyển
+    const inputShippingMethodChecked = document.querySelector(
+      `input[name="shippingMethod"]:checked`,
+    );
+    const dataShippingMethod = inputShippingMethodChecked?.value;
+    if (!dataShippingMethod) {
+      notyf.error("Vui lòng chọn phương thức vận chuyển!");
+      return;
+    }
+
     // Dữ liệu hoàn chỉnh
     const dataFinal = {
       ...dataUser,
       items: dataCart,
       coupon: dataCoupon,
       paymentMethod: dataPaymentMethod,
+      shippingMethod: dataShippingMethod,
     };
 
     fetch(`/order/create`, {

@@ -47,6 +47,10 @@ export const createPost = (req: Request, res: Response, next: NextFunction) => {
       .messages({
         "any.only": "Phương thức thanh toán không hợp lệ!",
       }),
+
+    shippingMethod: Joi.string().required().messages({
+      "string.empty": "Vui lòng chọn phương thức vận chuyển!",
+    }),
   });
 
   const { error } = schema.validate(req.body);
