@@ -200,3 +200,29 @@ export const createPost = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const success = async (req: Request, res: Response) => {
+  try {
+    const { orderCode, phone } = req.query;
+
+    if (!orderCode || !phone) {
+      return res.redirect("/");
+    }
+
+    const orderDetail = await Order.findOne({
+      code: orderCode,
+      phone: phone,
+      deleted: false,
+    });
+
+    res.render("client/pages/order-success", {
+      pageTitle: "Đặt hàng thành công!",
+      orderDetail: orderDetail,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "Lỗi đặt hàng!",
+    });
+  }
+};

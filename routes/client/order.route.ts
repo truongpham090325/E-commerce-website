@@ -12,4 +12,6 @@ router.post(
   orderController.createPost,
 );
 
+router.get("/success", orderController.success);
+
 export default router;

@@ -2641,7 +2641,7 @@ if (buttonOrder) {
         if (data.code == "success") {
           // Xóa item ra khỏi giỏ hàng
           let cart = JSON.parse(localStorage.getItem("cart"));
-          cart.filter((item) => item.checked == false);
+          cart = cart.filter((item) => item.checked == false);
           localStorage.setItem("cart", JSON.stringify(cart));
 
           // Xóa mã giảm giá
