@@ -2225,9 +2225,10 @@ if (listButtonApi.length > 0) {
 
 // Map
 const boxMap = document.querySelector("#boxMap");
+let map = null;
 if (boxMap) {
   // Khởi tạo bản đồ
-  const map = new ol.Map({
+  map = new ol.Map({
     target: "boxMap",
     layers: [
       new ol.layer.Tile({
@@ -2528,3 +2529,34 @@ if (applyCouponForm) {
   });
 }
 // End applyCouponForm
+
+// Checkout Page
+const checkoutPage = document.querySelector(".checkout_page");
+if (checkoutPage) {
+  const listInputUserAddress = checkoutPage.querySelectorAll(
+    `input[name="userAddress"]`,
+  );
+
+  const collapseEl = checkoutPage.querySelector("#collapseThree");
+  const collapse = new bootstrap.Collapse(collapseEl, { toggle: false });
+
+  listInputUserAddress.forEach((input) => {
+    input.addEventListener("change", () => {
+      // Bỏ toàn bộ checked
+      listInputUserAddress.forEach((i) => {
+        if (input.value == i.value) {
+          i.checked = true;
+        } else {
+          i.checked = false;
+        }
+      });
+      if (input.value == "") {
+        collapse.show();
+      } else {
+        collapse.hide();
+      }
+      map.updateSize();
+    });
+  });
+}
+// End Checkout Page
