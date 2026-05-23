@@ -11,7 +11,7 @@ form(class="checkout_form_area" id="checkoutAddressForm")
           )
           .form-check
             input#flexCheckDefault.form-check-input(
-              value="userAddress" 
+              value="" 
               name="userAddress"
               type="radio"
               )
@@ -65,3 +65,11 @@ form(class="checkout_form_area" id="checkoutAddressForm")
               div(class="single_input")
                 label(for="latitude") Vĩ độ *
                 input(type="text" name="latitude" id="latitude")
+            .col-xl-12
+              div(class="single_input")
+                label Ghi chú
+                textarea(
+                  placeholder="Ghi chú" 
+                  rows="2"
+                  name="note"
+                  )
