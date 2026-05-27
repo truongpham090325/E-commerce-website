@@ -4,6 +4,7 @@ import Product from "../../models/product.model";
 import slugify from "slugify";
 import AttributeProduct from "../../models/attribute-product.model";
 import { formatProductItem } from "../../helpers/product.helper";
+import Order from "../../models/order.model";
 
 export const productByCategory = async (req: Request, res: Response) => {
   const slug = req.params.slug;
