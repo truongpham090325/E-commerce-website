@@ -322,14 +322,14 @@ export const paymentZaloPay = async (req: Request, res: Response) => {
   }
 
   const config = {
-    app_id: `${process.env.ZALOPAY_APPID}`,
-    key1: `${process.env.ZALOPAY_KEY1}`,
-    key2: `${process.env.ZALOPAY_KEY2}`,
+    app_id: `${process.env.ZALOPAY_APPID || process.env.ZALOPAY_APP_ID}`,
+    key1: `${process.env.ZALOPAY_KEY1 || process.env.ZALOPAY_APP_KEY1}`,
+    key2: `${process.env.ZALOPAY_KEY2 || process.env.ZALOPAY_APP_KEY2}`,
     endpoint: `${process.env.ZALOPAY_DOMAIN}/v2/create`,
   };
 
   const embed_data = {
-    redirecturl: `${process.env.DOMAIN_WEBSITE}/order/success?orderCode=${orderCode}&phone=${phone}`,
+    redirecturl: `${process.env.WEBSITE_DOMAIN || process.env.DOMAIN_WEBSITE}/order/success?orderCode=${orderCode}&phone=${phone}`,
   };
 
   const items = [{}];
@@ -345,7 +345,7 @@ export const paymentZaloPay = async (req: Request, res: Response) => {
     description: `Thanh toán đơn hàng ${orderCode}`,
     bank_code: "",
     mac: "",
-    callback_url: `${process.env.DOMAIN_WEBSITE}/order/payment-zalopay-result`,
+    callback_url: `${process.env.WEBSITE_DOMAIN || process.env.DOMAIN_WEBSITE}/order/payment-zalopay-result`,
   };
 
   // appid|app_trans_id|appuser|amount|apptime|embeddata|item
@@ -372,7 +372,7 @@ export const paymentZaloPay = async (req: Request, res: Response) => {
 
 export const paymentZalopayResult = async (req: Request, res: Response) => {
   const config = {
-    key2: `${process.env.ZALOPAY_KEY2}`,
+    key2: `${process.env.ZALOPAY_KEY2 || process.env.ZALOPAY_APP_KEY2}`,
   };
 
   let result: any = {};
@@ -443,7 +443,7 @@ export const paymentVNPay = async (req: Request, res: Response) => {
   let tmnCode = `${process.env.VNPAY_TMN_CODE}`;
   let secretKey = `${process.env.VNPAY_HASH_SECRET}`;
   let vnpUrl = `${process.env.VNPAY_URL}`;
-  let returnUrl = `${process.env.DOMAIN_WEBSITE}/order/payment-vnpay-result`;
+  let returnUrl = `${process.env.WEBSITE_DOMAIN || process.env.DOMAIN_WEBSITE}/order/payment-vnpay-result`;
   let orderId = `${phone}-${orderCode}-${Date.now()}`;
   let amount = orderDetail.total || 0;
   let bankCode = "";
@@ -512,7 +512,7 @@ export const paymentVNPayResult = async (req: Request, res: Response) => {
     );
 
     res.redirect(
-      `${process.env.DOMAIN_WEBSITE}/order/success?orderCode=${orderCode}&phone=${phone}`,
+      `${process.env.WEBSITE_DOMAIN || process.env.DOMAIN_WEBSITE}/order/success?orderCode=${orderCode}&phone=${phone}`,
     );
   } else {
     res.render("success", { code: "97" });
