@@ -11,6 +11,9 @@ import axios from "axios";
 import { getInfoAddress } from "../../helpers/location.heloper";
 import moment from "moment";
 import hmacSHA256 from "crypto-js/hmac-sha256";
+import { renderFile } from "pug";
+import puppeteer from "puppeteer";
+import fs from "fs";
 
 export const createPost = async (req: Request, res: Response) => {
   try {
@@ -298,6 +301,8 @@ export const success = async (req: Request, res: Response) => {
     res.render("client/pages/order-success", {
       pageTitle: "Đặt hàng thành công!",
       orderDetail: orderDetail,
+      orderCode: orderCode,
+      phone: phone,
     });
   } catch (error) {
     console.log(error);
@@ -534,3 +539,47 @@ function sortObject(obj: any) {
   }
   return sorted;
 }
+
+export const exportPdf = async (req: Request, res: Response) => {
+  const { orderCode, phone } = req.query;
+
+  const orderDetail = await Order.findOne({
+    code: orderCode,
+    phone: phone,
+    deleted: false,
+  });
+
+  console.log(orderDetail);
+
+  if (!orderDetail) {
+    res.redirect("/");
+    return;
+  }
+
+  const css = fs.readFileSync("public/client/assets/css/invoice.css", "utf8");
+
+  // Render PUG sang HTML
+  const renderedHtml = await renderFile("views/client/pages/invoice.pug", {
+    orderDetail: orderDetail,
+  });
+
+  const html = `
+    <style>${css}</style>
+    ${renderedHtml}
+  `;
+
+  // Tạo PDF từ HTML sử dụng Puppeteer
+  const browser = await puppeteer.launch(); // Mở trình duyệt ẩn
+  const page = await browser.newPage(); // Mở tab mới
+  await page.setContent(html, { waitUntil: "networkidle0" }); // Đặt nội dung HTML
+  const pdfBuffer = await page.pdf({ format: "A4" }); // Tạo PDF dưới dạng buffer
+  await browser.close(); // Đóng trình duyệt
+
+  // Gửi file PDF về client
+  res.setHeader("Content-Type", "application/pdf"); // Thiết lập header để trình duyệt nhận biết đây là file PDF
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename=invoice_${orderCode}.pdf`,
+  ); // Thiết lập tên file khi tải về
+  res.send(pdfBuffer); // Gửi buffer PDF về client
+};
