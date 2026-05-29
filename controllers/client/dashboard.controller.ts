@@ -413,3 +413,28 @@ export const orderList = async (req: Request, res: Response) => {
     orderList: orderList,
   });
 };
+
+export const orderDetail = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const userId = res.locals.accountUser.id;
+
+    const orderDetail = await Order.findOne({
+      _id: id,
+      userId: userId,
+      deleted: false,
+    });
+
+    if (!orderDetail) {
+      res.redirect("/dashboard/order/list");
+      return;
+    }
+
+    res.render("client/pages/dashboard-order-detail", {
+      pageTitle: `Chi tiết đơn hàng: ${orderDetail.code}`,
+      orderDetail: orderDetail,
+    });
+  } catch (error) {
+    res.redirect("/dashboard/order/list");
+  }
+};
