@@ -56,4 +56,6 @@ router.patch(
   dashboardController.profilePhotoPatch,
 );
 
+router.get("/order/list", dashboardController.orderList);
+
 export default router;

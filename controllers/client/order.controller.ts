@@ -12,7 +12,7 @@ import { getInfoAddress } from "../../helpers/location.heloper";
 import moment from "moment";
 import hmacSHA256 from "crypto-js/hmac-sha256";
 import { renderFile } from "pug";
-import puppeteer from "puppeteer";
+import puppeteer from 'puppeteer';
 import fs from "fs";
 
 export const createPost = async (req: Request, res: Response) => {
@@ -548,8 +548,6 @@ export const exportPdf = async (req: Request, res: Response) => {
     phone: phone,
     deleted: false,
   });
-
-  console.log(orderDetail);
 
   if (!orderDetail) {
     res.redirect("/");
