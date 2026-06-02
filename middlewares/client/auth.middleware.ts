@@ -37,6 +37,8 @@ export const verifyToken = async (
         phone: existAccount.phone,
         avatar: existAccount.avatar,
         addressList: addressList,
+        totalPoint: existAccount.totalPoint,
+        usedPoint: existAccount.usedPoint,
       };
     }
   }
