@@ -445,7 +445,7 @@ export const orderReview = async (req: Request, res: Response) => {
     const userId = res.locals.accountUser.id;
     const orderId = req.params.id;
 
-    const orderDetail = await Order.findOne({
+    const orderDetail: any = await Order.findOne({
       _id: orderId,
       userId: userId,
       deleted: false,
@@ -454,6 +454,17 @@ export const orderReview = async (req: Request, res: Response) => {
     if (!orderDetail) {
       res.redirect("/dashboard/order/list");
       return;
+    }
+
+    // Lấy thông tin đánh giá của từng sản phẩm trong đơn hàng
+    for (const item of orderDetail.items) {
+      const review = await Review.findOne({
+        userId: userId,
+        orderItemId: item.id,
+      });
+      if (review) {
+        item.review = review;
+      }
     }
 
     res.render("client/pages/dashboard-order-review", {
@@ -557,7 +568,7 @@ export const orderReviewPost = async (req: Request, res: Response) => {
         );
         if (response.data.code === "success") {
           const savedLink = response.data.saveLinks[0];
-          const link = `${savedLink.folder}/${savedLink.filename}`;
+          const link = `${savedLink.folder}/${savedLink.fileName}`;
           imageLinks.push(link);
         }
       }
