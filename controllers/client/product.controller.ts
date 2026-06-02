@@ -176,6 +176,21 @@ export const productByCategory = async (req: Request, res: Response) => {
   });
   // Hết Thuộc tính
 
+  // Đánh giá
+  if (req.query.rating) {
+    const ratings = `${req.query.rating}`.split(",").map((r) => parseInt(r));
+
+    if (ratings.length > 0) {
+      find.$or = ratings.map((star) => ({
+        ratingAvg: {
+          $gte: star,
+          $lt: star + 1,
+        },
+      }));
+    }
+  }
+  // Hết Đánh giá
+
   const productList: any = await Product.find(find)
     .sort(sort)
     .limit(limitItems)
