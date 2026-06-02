@@ -1,3 +1,5 @@
+include stars.pug
+
 mixin product-list-item(item)
   div(class="product_list_item product_item_2 product_item")
     .row.align-items-center
@@ -29,12 +31,8 @@ mixin product-list-item(item)
           a.title(href=`/product/detail/${item.slug}`)
             | #{item.name}
           p.rating
-            i.fas.fa-star
-            i.fas.fa-star
-            i.fas.fa-star
-            i.fas.fa-star
-            i.fas.fa-star
-            span (0 Bình luận)
+            +stars(item)
+            span (#{item.ratingCount} Bình luận)
           p.price
             | #{item.priceNew.toLocaleString("vi-VN")}
             del #{item.priceOld.toLocaleString("vi-VN")}

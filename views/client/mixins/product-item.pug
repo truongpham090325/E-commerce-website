@@ -1,3 +1,5 @@
+include stars.pug
+
 mixin product-item(item)
   div(class="product_item_2 product_item")
     div(class="product_img")
@@ -35,12 +37,8 @@ mixin product-item(item)
         | #{item.priceNew.toLocaleString("vi-VN")}
         del #{item.priceOld.toLocaleString("vi-VN")}
       p.rating
-        i.fas.fa-star
-        i.fas.fa-star
-        i.fas.fa-star
-        i.fas.fa-star-half-alt
-        i.far.fa-star
-        span (0 bình luận)
+        +stars(item)
+        span (#{item.ratingCount} bình luận)
       ul.color
         each color in item.colorList
           li(style=`background:${color}`)
