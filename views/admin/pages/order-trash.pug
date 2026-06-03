@@ -1,6 +1,4 @@
 extends ../layouts/default.pug
-include ../mixins/pagination.pug
-include ../mixins/form-search.pug
 
 block main
   .row
@@ -11,19 +9,17 @@ block main
             .col
               h4.card-title #{pageTitle}
             // end col
-            .col-auto
-              a.btn.btn-danger.me-1(
-                href=`/${pathAdmin}/order/trash`
+            .col-auto(bis_skin_checked="1")
+              a.btn.btn-info(
+                href=`/${pathAdmin}/order/list`
                 )
-                i.far.fa-trash-alt.me-1
-                | Thùng rác
+                i.fas.fa-arrow-left.me-1
+                | Quay lại danh sách
             // end col
           // end row
         // end card-header
         .card-body.pt-0
-          .row
-            .col-lg-6
-              +form-search()
+          //- Table
           .table-responsive
             table.table.table-striped.mb-0
               thead.table-light
@@ -38,9 +34,9 @@ block main
                   th Ngày tạo
                   th.text-end Hành động
               tbody
-                each item, index in recordList
+                each item, index in orderList
                   tr
-                    td #{pagination.skip + index + 1}
+                    td #{index + 1}
                     td
                       b #{item.code}
                     td
@@ -81,14 +77,18 @@ block main
                     td
                       | #{item.createdAt.toLocaleString('vi-VN')}
                     td.text-end
-                      a(href=`/${pathAdmin}/order/edit/${item.id}`)
-                        i.las.la-pen.text-secondary.fs-20
                       a(
                         href="javascript:;"
                         button-api
                         data-method="PATCH"
-                        data-api=`/${pathAdmin}/order/delete/${item.id}`
-                      )
-                        i.las.la-trash-alt.text-secondary.fs-20
-          +pagination()
+                        data-api=`/${pathAdmin}/order/undo/${item.id}`
+                        )
+                        i.fas.fa-undo-alt.text-secondary.font-16.fs-20
+                      a(
+                        href="javascript:;"
+                        button-api
+                        data-method="DELETE"
+                        data-api=`/${pathAdmin}/order/destroy/${item.id}`
+                        )
+                        i.las.la-trash-alt.text-secondary.font-16.fs-20
     // end col
