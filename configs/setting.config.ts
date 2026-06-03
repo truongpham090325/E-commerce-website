@@ -28,3 +28,10 @@ export const getApiAppPassword = async () => {
   });
   return setting ? setting.data : null;
 };
+
+export const getGeneral = async () => {
+  const setting = await Setting.findOne({
+    key: "general",
+  });
+  return setting ? setting.data : null;
+};

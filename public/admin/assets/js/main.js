@@ -616,23 +616,25 @@ if (listButtonDeleteFolder.length > 0) {
 // End button-delete-folder
 
 // form-group-file
-const formGroupFile = document.querySelector("[form-group-file]");
-if (formGroupFile) {
-  const inputFile = formGroupFile.querySelector("[input-file]");
-  inputFile.addEventListener("input", () => {
-    const value = inputFile.value;
-    const previewFile = formGroupFile.querySelector("[preview-file]");
-    const img = previewFile.querySelector("img");
-    img.src = `${domainCDN}${value}`;
-  });
+const listFormGroupFile = document.querySelectorAll("[form-group-file]");
+if (listFormGroupFile.length > 0) {
+  listFormGroupFile.forEach((formGroupFile) => {
+    const inputFile = formGroupFile.querySelector("[input-file]");
+    inputFile.addEventListener("input", () => {
+      const value = inputFile.value;
+      const previewFile = formGroupFile.querySelector("[preview-file]");
+      const img = previewFile.querySelector("img");
+      img.src = `${domainCDN}${value}`;
+    });
 
-  // Hiện thị mặc định
-  if (inputFile.value) {
-    const value = inputFile.value;
-    const previewFile = formGroupFile.querySelector("[preview-file]");
-    const img = previewFile.querySelector("img");
-    img.src = `${domainCDN}${value}`;
-  }
+    // Hiện thị mặc định
+    if (inputFile.value) {
+      const value = inputFile.value;
+      const previewFile = formGroupFile.querySelector("[preview-file]");
+      const img = previewFile.querySelector("img");
+      img.src = `${domainCDN}${value}`;
+    }
+  });
 }
 // End form-group-file
 
@@ -2226,3 +2228,41 @@ if (settingApiAppPasswordForm) {
   });
 }
 // End Setting Api App Password Form
+
+// Setting General Form
+const settingGeneralForm = document.querySelector("#settingGeneralForm");
+if (settingGeneralForm) {
+  const validation = new JustValidate("#settingGeneralForm");
+
+  validation.onSuccess((event) => {
+    const domainWebsite = event.target.domainWebsite.value;
+    const logo = event.target.logo.value;
+    const favicon = event.target.favicon.value;
+
+    // Tạo dataFinal
+    const dataFinal = {
+      domainWebsite: domainWebsite,
+      logo: logo,
+      favicon: favicon,
+    };
+
+    fetch(`/${pathAdmin}/setting/general`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataFinal),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code == "error") {
+          notyf.error(data.message);
+        }
+
+        if (data.code == "success") {
+          notyf.success(data.message);
+        }
+      });
+  });
+}
+// End Setting General Form

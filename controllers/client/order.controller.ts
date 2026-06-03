@@ -17,7 +17,11 @@ import fs from "fs";
 import { addPointAfterPayment } from "../../helpers/point.helper";
 import { pointConfig } from "../../configs/variable.config";
 import AccountUser from "../../models/account-user.model";
-import { getApiPayment, getApiShipping } from "../../configs/setting.config";
+import {
+  getApiPayment,
+  getApiShipping,
+  getGeneral,
+} from "../../configs/setting.config";
 
 export const createPost = async (req: Request, res: Response) => {
   try {
@@ -359,6 +363,7 @@ export const paymentZaloPay = async (req: Request, res: Response) => {
   }
 
   const apiPayment = await getApiPayment();
+  const settingGeneral = await getGeneral();
 
   const config = {
     app_id: `${apiPayment.zaloPayAppId}`,
@@ -368,7 +373,7 @@ export const paymentZaloPay = async (req: Request, res: Response) => {
   };
 
   const embed_data = {
-    redirecturl: `${process.env.WEBSITE_DOMAIN || process.env.DOMAIN_WEBSITE}/order/success?orderCode=${orderCode}&phone=${phone}`,
+    redirecturl: `${settingGeneral.domainWebsite || settingGeneral.domainWebsite}/order/success?orderCode=${orderCode}&phone=${phone}`,
   };
 
   const items = [{}];
@@ -384,7 +389,7 @@ export const paymentZaloPay = async (req: Request, res: Response) => {
     description: `Thanh toán đơn hàng ${orderCode}`,
     bank_code: "",
     mac: "",
-    callback_url: `${process.env.WEBSITE_DOMAIN || process.env.DOMAIN_WEBSITE}/order/payment-zalopay-result`,
+    callback_url: `${settingGeneral.domainWebsite || settingGeneral.domainWebsite}/order/payment-zalopay-result`,
   };
 
   // appid|app_trans_id|appuser|amount|apptime|embeddata|item
@@ -485,11 +490,12 @@ export const paymentVNPay = async (req: Request, res: Response) => {
     req.connection.remoteAddress ||
     req.socket.remoteAddress;
   const apiPayment = await getApiPayment();
+  const settingDomain = await getGeneral();
 
   let tmnCode = `${apiPayment.vnPayTmnCode}`;
   let secretKey = `${apiPayment.vnPayHashSecret}`;
   let vnpUrl = `${apiPayment.vnPayURL}`;
-  let returnUrl = `${process.env.WEBSITE_DOMAIN || process.env.DOMAIN_WEBSITE}/order/payment-vnpay-result`;
+  let returnUrl = `${settingDomain.domainWebsite || settingDomain.domainWebsite}/order/payment-vnpay-result`;
   let orderId = `${phone}-${orderCode}-${Date.now()}`;
   let amount = orderDetail.total || 0;
   let bankCode = "";
@@ -562,8 +568,9 @@ export const paymentVNPayResult = async (req: Request, res: Response) => {
     await addPointAfterPayment(orderCode);
     // Hết Tích điểm
 
+    const settingDomain = await getGeneral();
     res.redirect(
-      `${process.env.WEBSITE_DOMAIN || process.env.DOMAIN_WEBSITE}/order/success?orderCode=${orderCode}&phone=${phone}`,
+      `${settingDomain.domainWebsite || settingDomain.domainWebsite}/order/success?orderCode=${orderCode}&phone=${phone}`,
     );
   } else {
     res.render("success", { code: "97" });
