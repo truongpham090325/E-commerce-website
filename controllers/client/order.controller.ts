@@ -8,7 +8,7 @@ import Product from "../../models/product.model";
 import AttributeProduct from "../../models/attribute-product.model";
 import Coupon from "../../models/coupon.model";
 import axios from "axios";
-import { getInfoAddress } from "../../helpers/location.heloper";
+import { getInfoAddress } from "../../helpers/location.helper";
 import moment from "moment";
 import hmacSHA256 from "crypto-js/hmac-sha256";
 import { renderFile } from "pug";
@@ -17,6 +17,7 @@ import fs from "fs";
 import { addPointAfterPayment } from "../../helpers/point.helper";
 import { pointConfig } from "../../configs/variable.config";
 import AccountUser from "../../models/account-user.model";
+import { getApiShipping } from "../../configs/setting.config";
 
 export const createPost = async (req: Request, res: Response) => {
   try {
@@ -245,12 +246,14 @@ export const createPost = async (req: Request, res: Response) => {
       },
     };
 
+    const apiShipping = await getApiShipping();
+
     const goshipRes = await axios.post(
       "https://sandbox.goship.io/api/v2/shipments",
       dataGoShip,
       {
         headers: {
-          Authorization: `Bearer ${process.env.GOSHIP_TOKEN}`,
+          Authorization: `Bearer ${apiShipping.tokenGoShip}`,
           "Content-Type": "application/json",
         },
       },

@@ -1,14 +1,17 @@
 import axios from "axios";
+import { getApiShipping } from "../configs/setting.config";
 
 const normalizeAddress = async (
   city: string,
   district: string,
   ward: string,
 ) => {
+  const apiShipping = await getApiShipping();
+
   // Thông tin tỉnh/thành
   const cityRes = await axios.get("https://sandbox.goship.io/api/v2/cities", {
     headers: {
-      Authorization: `Bearer ${process.env.GOSHIP_TOKEN}`,
+      Authorization: `Bearer ${apiShipping.tokenGoShip}`,
     },
   });
   const cityInfo = cityRes.data.data.find((item: any) => item.name == city);
@@ -18,7 +21,7 @@ const normalizeAddress = async (
     `https://sandbox.goship.io/api/v2/cities/${cityInfo.id}/districts`,
     {
       headers: {
-        Authorization: `Bearer ${process.env.GOSHIP_TOKEN}`,
+        Authorization: `Bearer ${apiShipping.tokenGoShip}`,
       },
     },
   );
@@ -32,7 +35,7 @@ const normalizeAddress = async (
     `https://sandbox.goship.io/api/v2/districts/${districtInfo.id}/wards`,
     {
       headers: {
-        Authorization: `Bearer ${process.env.GOSHIP_TOKEN}`,
+        Authorization: `Bearer ${apiShipping.tokenGoShip}`,
       },
     },
   );

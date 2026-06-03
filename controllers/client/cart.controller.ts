@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import Product from "../../models/product.model";
 import AttributeProduct from "../../models/attribute-product.model";
 import axios from "axios";
-import { getInfoAddress } from "../../helpers/location.heloper";
+import { getInfoAddress } from "../../helpers/location.helper";
 import { pointConfig } from "../../configs/variable.config";
+import { getApiShipping } from "../../configs/setting.config";
 
 export const list = async (req: Request, res: Response) => {
   try {
@@ -91,12 +92,14 @@ export const list = async (req: Request, res: Response) => {
         },
       };
 
+      const apiShipping = await getApiShipping();
+
       const goshipRes = await axios.post(
         "https://sandbox.goship.io/api/v2/rates",
         dataGoShip,
         {
           headers: {
-            Authorization: `Bearer ${process.env.GOSHIP_TOKEN}`,
+            Authorization: `Bearer ${apiShipping.tokenGoShip}`,
             "Content-Type": "application/json",
           },
         },

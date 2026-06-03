@@ -10,6 +10,7 @@ import adminLogRoutes from "./admin-log.route";
 import productRoutes from "./product.route";
 import couponRoutes from "./coupon.route";
 import accountUser from "./account-user.route";
+import settingRoutes from "./setting.route";
 
 import * as authMiddleware from "../../middlewares/admin/auth.middleware";
 
@@ -26,5 +27,6 @@ router.use("/admin-log", authMiddleware.verifyToken, adminLogRoutes);
 router.use("/product", authMiddleware.verifyToken, productRoutes);
 router.use("/coupon", authMiddleware.verifyToken, couponRoutes);
 router.use("/account-user", authMiddleware.verifyToken, accountUser);
+router.use("/setting", authMiddleware.verifyToken, settingRoutes);
 
 export default router;
