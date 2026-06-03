@@ -11,6 +11,7 @@ import productRoutes from "./product.route";
 import couponRoutes from "./coupon.route";
 import accountUser from "./account-user.route";
 import settingRoutes from "./setting.route";
+import orderRoutes from "./order.route";
 
 import * as authMiddleware from "../../middlewares/admin/auth.middleware";
 
@@ -28,5 +29,6 @@ router.use("/product", authMiddleware.verifyToken, productRoutes);
 router.use("/coupon", authMiddleware.verifyToken, couponRoutes);
 router.use("/account-user", authMiddleware.verifyToken, accountUser);
 router.use("/setting", authMiddleware.verifyToken, settingRoutes);
+router.use("/order", authMiddleware.verifyToken, orderRoutes);
 
 export default router;
