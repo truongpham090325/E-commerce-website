@@ -17,7 +17,7 @@ import fs from "fs";
 import { addPointAfterPayment } from "../../helpers/point.helper";
 import { pointConfig } from "../../configs/variable.config";
 import AccountUser from "../../models/account-user.model";
-import { getApiShipping } from "../../configs/setting.config";
+import { getApiPayment, getApiShipping } from "../../configs/setting.config";
 
 export const createPost = async (req: Request, res: Response) => {
   try {
@@ -358,11 +358,13 @@ export const paymentZaloPay = async (req: Request, res: Response) => {
     return;
   }
 
+  const apiPayment = await getApiPayment();
+
   const config = {
-    app_id: `${process.env.ZALOPAY_APPID || process.env.ZALOPAY_APP_ID}`,
-    key1: `${process.env.ZALOPAY_KEY1 || process.env.ZALOPAY_APP_KEY1}`,
-    key2: `${process.env.ZALOPAY_KEY2 || process.env.ZALOPAY_APP_KEY2}`,
-    endpoint: `${process.env.ZALOPAY_DOMAIN}/v2/create`,
+    app_id: `${apiPayment.zaloPayAppId}`,
+    key1: `${apiPayment.zaloPayKey1}`,
+    key2: `${apiPayment.zaloPayKey2}`,
+    endpoint: `${apiPayment.zaloPayDomain}/v2/create`,
   };
 
   const embed_data = {
@@ -408,8 +410,10 @@ export const paymentZaloPay = async (req: Request, res: Response) => {
 };
 
 export const paymentZalopayResult = async (req: Request, res: Response) => {
+  const apiPayment = await getApiPayment();
+
   const config = {
-    key2: `${process.env.ZALOPAY_KEY2 || process.env.ZALOPAY_APP_KEY2}`,
+    key2: `${apiPayment.zaloPayKey2}`,
   };
 
   let result: any = {};
@@ -480,10 +484,11 @@ export const paymentVNPay = async (req: Request, res: Response) => {
     req.headers["x-forwarded-for"] ||
     req.connection.remoteAddress ||
     req.socket.remoteAddress;
+  const apiPayment = await getApiPayment();
 
-  let tmnCode = `${process.env.VNPAY_TMN_CODE}`;
-  let secretKey = `${process.env.VNPAY_HASH_SECRET}`;
-  let vnpUrl = `${process.env.VNPAY_URL}`;
+  let tmnCode = `${apiPayment.vnPayTmnCode}`;
+  let secretKey = `${apiPayment.vnPayHashSecret}`;
+  let vnpUrl = `${apiPayment.vnPayURL}`;
   let returnUrl = `${process.env.WEBSITE_DOMAIN || process.env.DOMAIN_WEBSITE}/order/payment-vnpay-result`;
   let orderId = `${phone}-${orderCode}-${Date.now()}`;
   let amount = orderDetail.total || 0;
@@ -531,7 +536,8 @@ export const paymentVNPayResult = async (req: Request, res: Response) => {
 
   vnp_Params = sortObject(vnp_Params);
 
-  let secretKey = `${process.env.VNPAY_HASH_SECRET}`;
+  const apiPayment = await getApiPayment();
+  let secretKey = `${apiPayment.vnPayHashSecret}`;
 
   let querystring = require("qs");
   let signData = querystring.stringify(vnp_Params, { encode: false });
