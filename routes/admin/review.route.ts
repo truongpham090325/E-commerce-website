@@ -7,4 +7,6 @@ router.get("/list", reviewController.list);
 
 router.patch("/change-status/:id/:status", reviewController.changeStatusPatch);
 
+router.delete("/destroy/:id", reviewController.destroyDelete);
+
 export default router;
