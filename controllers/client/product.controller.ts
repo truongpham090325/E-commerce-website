@@ -4,7 +4,6 @@ import Product from "../../models/product.model";
 import slugify from "slugify";
 import AttributeProduct from "../../models/attribute-product.model";
 import { formatProductItem } from "../../helpers/product.helper";
-import Order from "../../models/order.model";
 import Review from "../../models/review.model";
 import AccountUser from "../../models/account-user.model";
 import moment from "moment";
