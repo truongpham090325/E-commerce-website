@@ -13,4 +13,8 @@ router.patch("/undo/:id", orderController.undoPatch);
 
 router.delete("/destroy/:id", orderController.destroyDelete);
 
+router.get("/edit/:id", orderController.edit);
+
+router.patch("/edit/:id", orderController.editPatch);
+
 export default router;
