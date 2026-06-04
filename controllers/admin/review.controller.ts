@@ -61,3 +61,30 @@ export const list = async (req: Request, res: Response) => {
     pagination: pagination,
   });
 };
+
+export const changeStatusPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const status = req.params.status;
+
+    await Review.updateOne(
+      {
+        _id: id,
+      },
+      {
+        status: status,
+      },
+    );
+
+    res.json({
+      code: "success",
+      message: "Cập nhập trạng thái thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
+};
