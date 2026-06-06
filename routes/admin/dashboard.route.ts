@@ -9,4 +9,6 @@ router.get("/revenue-by-time", dashboardController.revenueByTime);
 
 router.get("/order-statistic", dashboardController.orderStatistic);
 
+router.get("/customer-statistic", dashboardController.customerStatistic);
+
 export default router;
