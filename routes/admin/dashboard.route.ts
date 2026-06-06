@@ -3,6 +3,8 @@ import * as dashboardController from "../../controllers/admin/dashboard.controll
 
 const router = Router();
 
-router.get('/', dashboardController.dashboard);
+router.get("/", dashboardController.dashboard);
+
+router.get("/revenue-by-time", dashboardController.revenueByTime);
 
 export default router;
