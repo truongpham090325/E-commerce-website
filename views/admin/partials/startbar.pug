@@ -26,10 +26,19 @@
           if (permissions.includes("dashboard"))
             li.nav-item
               a.nav-link(
-                href=`/${pathAdmin}/dashboard`
+                aria-controls="sidebarDashboard" 
+                aria-expanded="false" 
+                role="button" 
+                data-bs-toggle="collapse" 
+                href="#sidebarDashboard"
                 )
                 i.iconoir-home-simple.menu-icon
                 span Tổng quan
+              #sidebarDashboard.collapse
+                ul.nav.flex-column
+                  li.nav-item
+                    a.nav-link(href=`/${pathAdmin}/dashboard`) Tổng quan KPI
+                  // end nav-item
           li.nav-item
             a.nav-link(
               aria-controls="sidebarProduct" 
