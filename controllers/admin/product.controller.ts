@@ -8,6 +8,7 @@ import AttributeProduct from "../../models/attribute-product.model";
 import { Parser } from "json2csv";
 import Papa from "papaparse";
 import { generateRandomString } from "../../helpers/generate.helper";
+import { pingGoogleSitemap } from "../../helpers/ping-google.helper";
 
 export const category = async (req: Request, res: Response) => {
   const find: {
@@ -440,6 +441,9 @@ export const createPost = async (req: Request, res: Response) => {
       },
     };
     // Hết Thêm SEO mặc định
+
+    // Ping Google
+    await pingGoogleSitemap();
 
     const newRecord = new Product(req.body);
     await newRecord.save();

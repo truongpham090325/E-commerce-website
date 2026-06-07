@@ -6,6 +6,7 @@ import { pathAdmin } from "../../configs/variable.config";
 import Blog from "../../models/blog.model";
 import { logAdminAction } from "../../helpers/log.helper";
 import { RequestAccount } from "../../interfaces/request.interface";
+import { pingGoogleSitemap } from "../../helpers/ping-google.helper";
 
 export const category = async (req: Request, res: Response) => {
   const find: {
@@ -369,6 +370,9 @@ export const createPost = async (req: RequestAccount, res: Response) => {
       req,
       `Đã tạo bài viết: ${req.body.name} (Id: ${newRecord.id})`,
     );
+
+    // Ping Google
+    await pingGoogleSitemap();
 
     res.json({
       code: "success",
