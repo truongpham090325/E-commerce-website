@@ -13,6 +13,7 @@ import accountUser from "./account-user.route";
 import settingRoutes from "./setting.route";
 import orderRoutes from "./order.route";
 import reviewRoutes from "./review.route";
+import blockRoutes from "./block.route";
 
 import * as authMiddleware from "../../middlewares/admin/auth.middleware";
 
@@ -32,5 +33,6 @@ router.use("/account-user", authMiddleware.verifyToken, accountUser);
 router.use("/setting", authMiddleware.verifyToken, settingRoutes);
 router.use("/order", authMiddleware.verifyToken, orderRoutes);
 router.use("/review", authMiddleware.verifyToken, reviewRoutes);
+router.use("/block", authMiddleware.verifyToken, blockRoutes);
 
 export default router;
