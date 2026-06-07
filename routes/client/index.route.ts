@@ -14,12 +14,14 @@ import orderRoutes from "./order.route";
 import * as categoryMiddleware from "../../middlewares/client/category.middleware";
 import * as attributeMiddleware from "../../middlewares/client/attribute.middleware";
 import * as authMiddleware from "../../middlewares/client/auth.middleware";
+import * as seoMiddlewaer from "../../middlewares/client/seo.middleware";
 
 const router = Router();
 
 router.use(categoryMiddleware.getAllCategory);
 router.use(attributeMiddleware.getAttributeProduct);
 router.use(authMiddleware.verifyToken);
+router.use(seoMiddlewaer.canonical);
 
 router.use("/", homeRoutes);
 router.use("/blog", blogRoutes);

@@ -406,6 +406,7 @@ export const detail = async (req: Request, res: Response) => {
       boughtTogetherProducts: boughtTogetherProducts,
       viewedProducts: viewedProducts,
       reviewList: reviewList,
+      seo: productDetail.seo,
     });
   } catch (error) {
     console.log(error);
