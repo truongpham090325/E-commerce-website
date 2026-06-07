@@ -52,3 +52,76 @@ export const createPost = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const edit = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const blockDetail = await Block.findOne({
+      _id: id,
+      deleted: false,
+    });
+
+    if (!blockDetail) {
+      res.redirect("/admin/list");
+      return;
+    }
+
+    // Lấy ra đường dẫn
+    const blocksDir = path.join(process.cwd(), "views", "client", "blocks"); // process.cwd() thư mục gốc
+
+    // Lấy ra danh sách file
+    const fileList = fs.readdirSync(blocksDir);
+
+    res.render("admin/pages/block-edit", {
+      pageTitle: "Tạo block",
+      fileList: fileList,
+      blockDetail: blockDetail,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect("/admin/list");
+  }
+};
+
+export const editPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const blockDetail = await Block.findOne({
+      _id: id,
+      deleted: false,
+    });
+
+    if (!blockDetail) {
+      res.json({
+        code: "error",
+        message: "Block không tồn tại!",
+      });
+      return;
+    }
+
+    req.body.search = slugify(`${req.body.name} ${req.body.fileName}`, {
+      replacement: " ",
+      lower: true,
+    });
+
+    await Block.updateOne(
+      {
+        _id: id,
+        deleted: false,
+      },
+      req.body,
+    );
+
+    res.json({
+      code: "success",
+      message: "Sửa block thành công!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
+};
