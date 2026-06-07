@@ -13,4 +13,6 @@ router.get("/edit/:id", blockController.edit);
 
 router.patch("/edit/:id", blockController.editPatch);
 
+router.delete("/destroy/:id", blockController.destroyDelete);
+
 export default router;
