@@ -13,4 +13,6 @@ router.get("/edit/:id", templateController.edit);
 
 router.patch("/edit/:id", templateController.editPatch);
 
+router.delete("/destroy/:id", templateController.destroyDelete);
+
 export default router;

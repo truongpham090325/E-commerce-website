@@ -152,3 +152,37 @@ export const editPatch = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const destroyDelete = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const templateDetail = await Template.findOne({
+      _id: id,
+    });
+
+    if (!templateDetail) {
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!",
+      });
+      return;
+    }
+
+    await Template.deleteOne({
+      _id: id,
+    });
+
+    res.json({
+      code: "success",
+      message: "Đã xóa vĩnh viễn template!",
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!",
+    });
+  }
+};
