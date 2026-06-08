@@ -4,8 +4,14 @@ import slugify from "slugify";
 import Template from "../../models/template.model";
 
 export const list = async (req: Request, res: Response) => {
+  const recordList = await Template.find({
+    deleted: false,
+    status: "active",
+  });
+
   res.render("admin/pages/template-list", {
     pageTitle: "Quản lý template",
+    recordList: recordList,
   });
 };
 
