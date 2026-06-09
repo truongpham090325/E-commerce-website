@@ -73,7 +73,7 @@ export const edit = async (req: Request, res: Response) => {
     const fileList = fs.readdirSync(blocksDir);
 
     res.render("admin/pages/block-edit", {
-      pageTitle: "Tạo block",
+      pageTitle: "Chỉnh sửa block",
       fileList: fileList,
       blockDetail: blockDetail,
     });
