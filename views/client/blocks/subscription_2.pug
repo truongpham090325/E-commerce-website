@@ -3,7 +3,7 @@
     SUBSCRIPTION 2 START
     ==========================
 section(
-  style="background: url(/client/assets/images/subscribe_2_bg.jpg);" 
+  style=`background: url(${blockData.backgroundImage});` 
   class="subscription_2 mt_50 xs_mt_60"
   )
   .container
@@ -11,19 +11,18 @@ section(
       .col-xxl-6.col-lg-8.wow.fadeInUp
         div(class="subscription_2_text")
           h2
-            | Get Upto
-            span 70%
-            | Off Discount Coupon
-          p by Subscribe our Newsletter
+            | #{blockData.title.normal}
+            span #{blockData.title.highlight}
+          p #{blockData.description}
           form(action="#")
             input(
-              placeholder="Your email" 
+              placeholder=blockData.placeholder 
               type="text"
               )
             button(
               class="common_btn" 
               type="submit"
-              ) Subscribe
+              ) #{blockData.buttonText}
 //
   ========================
     SUBSCRIPTION 2 END
