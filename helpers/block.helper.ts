@@ -4,8 +4,6 @@ import pug from "pug";
 import { domainCDN } from "../configs/variable.config";
 import Block from "../models/block.model";
 import Template from "../models/template.model";
-import CategoryProduct from "../models/category-product.model";
-import Product from "../models/product.model";
 import { formatProductItem, getProductByCategory } from "./product.helper";
 
 export const renderHTML = async (
