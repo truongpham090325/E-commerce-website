@@ -1,3 +1,7 @@
+import moment from "moment";
+import AccountAdmin from "../models/account-admin.model";
+import Blog from "../models/blog.model";
+import CategoryBlog from "../models/category-blog.model";
 import CategoryProduct from "../models/category-product.model";
 import Product from "../models/product.model";
 
@@ -61,4 +65,63 @@ export const getProductByCategory = async (getByCategory: any) => {
   }
 
   return productList;
+};
+
+export const getBlogByCategory = async (getByCategory: any) => {
+  let blogList: any[] = [];
+
+  // Tạo đối tượng tìm kiếm
+  const find: any = {
+    deleted: false,
+    status: "published",
+  };
+
+  // Lấy mảng id các danh mục
+  if (getByCategory.category && getByCategory.category.length) {
+    const categoryList = await CategoryBlog.find({
+      slug: { $in: getByCategory.category },
+      deleted: false,
+      status: "active",
+    });
+    const categoryIds = categoryList.map((category: any) => category.id);
+    find.category = { $in: categoryIds };
+  }
+
+  // Lấy giới hạn bài viết
+  let limit = 10;
+  if (getByCategory.limit) {
+    limit = getByCategory.limit;
+  }
+
+  // Sắp xếp
+  const sort: any = {};
+  if (getByCategory.sort && getByCategory.sort.by && getByCategory.sort.type) {
+    sort[getByCategory.sort.by] = getByCategory.sort.type;
+  }
+
+  // Lấy ra bài viết
+  blogList = await Blog.find(find).sort(sort).limit(limit);
+  for (const item of blogList) {
+    if (item.updatedBy) {
+      const accountAdmin = await AccountAdmin.findOne({
+        _id: item.updatedBy,
+      });
+
+      if (accountAdmin) {
+        item.authorName = accountAdmin.fullName;
+        item.date = moment(item.createdAt).format("DD/MM/YYYY");
+      }
+    } else {
+      const accountAdmin = await AccountAdmin.findOne({
+        _id: item.createdBy,
+      });
+
+      if (accountAdmin) {
+        item.authorName = accountAdmin.fullName;
+        item.date = moment(item.createdAt).format("DD/MM/YYYY");
+      }
+    }
+  }
+
+  return blogList;
 };
