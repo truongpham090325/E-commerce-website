@@ -8,7 +8,7 @@ import { getBlockListByTemplate, renderHTML } from "../../helpers/block.helper";
 export const home = async (req: Request, res: Response) => {
   const blockList = await getBlockListByTemplate("/");
 
-  const blocksHtml = renderHTML(req, res, blockList);
+  const blocksHtml = await renderHTML(req, res, blockList);
 
   res.render("client/pages/home", {
     pageTitle: "Trang chủ",
