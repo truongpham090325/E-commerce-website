@@ -10,12 +10,19 @@ import session = require("express-session");
 import { configureGooglePassport } from "./configs/googleOauth.config";
 import passport = require("passport");
 import { configureFacebookPassport } from "./configs/facebookOauth.config";
+import { createServer } from "node:http";
+import { Server } from "socket.io";
+import { initSocket } from "./sockets/index.socket";
 
 // Load biến môi trường
 dotenv.config();
 
 const app = express();
 const port = 4000;
+
+// Khởi tạo SocketIO bên Server
+const server = createServer(app);
+const io = new Server(server);
 
 // Kết nối cơ sở dữ liệu
 connectDB();
@@ -55,6 +62,9 @@ app.locals.domainCDN = domainCDN;
 app.use(`/${pathAdmin}`, adminRoutes);
 app.use("/", clientRoutes);
 
-app.listen(port, () => {
+// Khởi tạo Socket bên Server
+initSocket(io);
+
+server.listen(port, () => {
   console.log(`Website đang chạy trên cổng ${port}`);
 });
