@@ -10,12 +10,12 @@ export const authSocket = (socket: Socket, next: any) => {
 
       let token: string = "";
       let role: string = "";
-      if (cookieParsed.tokenAdmin) {
-        token = cookieParsed.tokenAdmin;
-        role = "admin";
-      } else if (cookieParsed.tokenUser) {
+      if (cookieParsed.tokenUser) {
         token = cookieParsed.tokenUser;
         role = "user";
+      } else if (cookieParsed.tokenAdmin) {
+        token = cookieParsed.tokenAdmin;
+        role = "admin";
       }
 
       if (token && role) {
