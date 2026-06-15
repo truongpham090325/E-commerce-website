@@ -49,6 +49,7 @@ export const verifyToken = async (
       }
 
       res.locals.accountAdmin = {
+        id: existAccount.id,
         fullName: existAccount.fullName,
         email: existAccount.email,
         avatar: existAccount.avatar,
