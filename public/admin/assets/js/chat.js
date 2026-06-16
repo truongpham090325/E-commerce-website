@@ -6,7 +6,10 @@ const formChat = document.querySelector("[form-chat]");
 if (formChat) {
   const inputContent = formChat.querySelector("[input-content]");
   const buttonSend = formChat.querySelector("[button-send]");
-  const chatBody = document.querySelector("#chat-body");
+  const chatRoomId = document
+    .querySelector("[chat-room-id]")
+    .getAttribute("chat-room-id");
+  const chatDetail = document.querySelector(".chat-detail");
 
   buttonSend.addEventListener("click", () => {
     const content = inputContent.value;
@@ -21,13 +24,22 @@ if (formChat) {
 
   // Nhận tin nhắn từ server
   socket.on("SERVER_SEND_MESSAGE", (data) => {
-    const elementMessage = document.createElement("div");
-    elementMessage.classList.add("message");
-    elementMessage.classList.add(data.senderRole);
-    elementMessage.innerHTML = `
-      <div class="bubble">${data.content}</div>
-    `;
-    chatBody.appendChild(elementMessage);
+    if (chatRoomId == data.roomId) {
+      const elementMessage = document.createElement("div");
+      if (data.senderRole === "user") {
+        elementMessage.classList.add("d-flex");
+      } else {
+        elementMessage.classList.add("d-flex", "flex-row-reverse");
+      }
+      elementMessage.innerHTML = `
+        <div class="chat-box w-100 ${data.senderRole === "user" ? "" : "reverse"}">
+          <div class="user-chat">
+            <p>${data.content}</p>
+          </div>
+        </div>
+      `;
+      chatDetail.appendChild(elementMessage);
+    }
   });
 }
 // Hết logic nhắn tin của admin
