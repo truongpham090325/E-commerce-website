@@ -6,6 +6,7 @@ const formChat = document.querySelector("[form-chat]");
 if (formChat) {
   const inputContent = formChat.querySelector("[input-content]");
   const buttonSend = formChat.querySelector("[button-send]");
+  const chatBody = document.querySelector("#chat-body");
 
   buttonSend.addEventListener("click", () => {
     const content = inputContent.value;
@@ -20,7 +21,13 @@ if (formChat) {
 
   // Nhận tin nhắn từ server
   socket.on("SERVER_SEND_MESSAGE", (data) => {
-    console.log(data);
+    const elementMessage = document.createElement("div");
+    elementMessage.classList.add("message");
+    elementMessage.classList.add(data.senderRole);
+    elementMessage.innerHTML = `
+      <div class="bubble">${data.content}</div>
+    `;
+    chatBody.appendChild(elementMessage);
   });
 }
 // Hết logic nhắn tin của admin
