@@ -28,6 +28,10 @@ export const chatSocket = async (io: Server, socket: Socket) => {
           status: "open",
         });
       }
+    } else if (account.role === "admin") {
+      chatRoom = await ChatRoom.findOne({
+        adminId: account.id,
+      });
     }
 
     // Lắng nghe sự kiện CLIENT_SEND_MESSAGE
@@ -52,6 +56,17 @@ export const chatSocket = async (io: Server, socket: Socket) => {
           {
             $inc: {
               "unreadCount.user": 1,
+            },
+          },
+        );
+      } else if (account.role === "admin") {
+        await ChatRoom.updateOne(
+          {
+            _id: chatRoom.id,
+          },
+          {
+            $inc: {
+              "unreadCount.admin": 1,
             },
           },
         );
