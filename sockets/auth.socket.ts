@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import * as cookie from "cookie";
 import jwt from "jsonwebtoken";
+import { pathAdmin } from "../configs/variable.config";
 
 export const authSocket = (socket: Socket, next: any) => {
   try {
@@ -10,12 +11,26 @@ export const authSocket = (socket: Socket, next: any) => {
 
       let token: string = "";
       let role: string = "";
-      if (cookieParsed.tokenUser) {
-        token = cookieParsed.tokenUser;
-        role = "user";
-      } else if (cookieParsed.tokenAdmin) {
-        token = cookieParsed.tokenAdmin;
-        role = "admin";
+
+      const referer = socket.handshake.headers.referer || "";
+      const isAdminPath = referer.includes(`/${pathAdmin}`);
+
+      if (isAdminPath) {
+        if (cookieParsed.tokenAdmin) {
+          token = cookieParsed.tokenAdmin;
+          role = "admin";
+        } else if (cookieParsed.tokenUser) {
+          token = cookieParsed.tokenUser;
+          role = "user";
+        }
+      } else {
+        if (cookieParsed.tokenUser) {
+          token = cookieParsed.tokenUser;
+          role = "user";
+        } else if (cookieParsed.tokenAdmin) {
+          token = cookieParsed.tokenAdmin;
+          role = "admin";
+        }
       }
 
       if (token && role) {
